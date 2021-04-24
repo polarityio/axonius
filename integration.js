@@ -282,7 +282,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
         lookupResults.push({
           entity: result.entity,
           data: {
-            summary: [],
+            summary: [`Search Result Count: ${expandedBody.data.length}`],
             details: expandedBody
           }
         });
