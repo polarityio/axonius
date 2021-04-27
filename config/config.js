@@ -103,8 +103,7 @@ module.exports = {
     {
       key: 'searchLimit',
       name: 'Search Result Limit',
-      description:
-        'Maximum number of query results to return in the Polarity overlay.',
+      description: 'Maximum number of query results to return in the Polarity overlay.',
       default: 10,
       type: 'number',
       userCanEdit: false,
