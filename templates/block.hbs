@@ -1,4 +1,5 @@
 {{#each details.data as |result index|}}
+  {{!-- NonEmail Types --}}
   {{#if (not-eq block.entity.type "email")}}
     {{#if (gt index 0)}}
       <hr>
@@ -11,6 +12,8 @@
       </div>
     {{/if}}
   {{/if}}
+
+  {{!-- Email Type --}}
   {{#if (eq block.entity.type "email")}}
     {{#if (gt index 0)}}
       <hr>
@@ -23,6 +26,8 @@
       </div>
     {{/if}}
   {{/if}}
+
+  {{!-- All Types --}}
   {{#if result.attributes.specific_data.data.hostname}}
     <div>
       <span class="p-key">Host Name:</span>
@@ -42,17 +47,25 @@
   {{#if result.attributes.specific_data.data.display_name}}
     <div>
       <span class="p-key">Display Name:</span>
-      {{#each result.attributes.specific_data.data.display_name as |name|}}
-        <span class="p-value">{{name}}</span>
-      {{/each}}
+      {{#if (is-array result.attributes.specific_data.data.display_name)}}
+        {{#each result.attributes.specific_data.data.display_name as |name|}}
+          <span class="p-value">{{name}}</span>
+        {{/each}}
+      {{else}}
+          <span class="p-value">{{result.attributes.specific_data.data.display_name}}</span>
+      {{/if}}
     </div>
   {{/if}}
   {{#if result.attributes.specific_data.data.employee_id}}
     <div>
       <span class="p-key">Employee ID:</span>
-      {{#each result.attributes.specific_data.data.employee_id as |id|}}
-        <span class="p-value">{{id}}</span>
-      {{/each}}
+      {{#if (is-array result.attributes.specific_data.data.employee_id)}}
+        {{#each result.attributes.specific_data.data.employee_id as |id|}}
+          <span class="p-value">{{id}}</span>
+        {{/each}}
+      {{else}}
+        <span class="p-value">{{result.attributes.specific_data.data.employee_id}}</span>
+      {{/if}}
     </div>
   {{/if}}
   {{#if result.attributes.specific_data.data.is_local}}
