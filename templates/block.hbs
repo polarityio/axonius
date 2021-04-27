@@ -1,167 +1,161 @@
-{{#if details.data}}
-  {{#each details.data as |result index|}}
-    {{#if (not-eq block.entity.type "email")}}
-      {{#if (gt index 0)}}
-        <hr>
-      {{/if}}
-      <span class="p-title">Device #{{inc index}} Details:</span>
-      {{#if result.attributes.internal_axon_id}}
-        <div>
-          <span class="p-key">Axonius ID:</span>
-          <a href="{{block.userOptions.url}}/devices/{{result.attributes.internal_axon_id}}" class="p-link"> {{result.attributes.internal_axon_id}} {{fa-icon "external-link-square" class="external-link-icon"}}</a>
-        </div>
-      {{/if}}
+{{#each details.data as |result index|}}
+  {{!-- NonEmail Types --}}
+  {{#if (not-eq block.entity.type "email")}}
+    {{#if (gt index 0)}}
+      <hr>
     {{/if}}
-    {{#if (eq block.entity.type "email")}}
-      {{#if (gt index 0)}}
-        <hr>
-      {{/if}}
-      <span class="p-title">User #{{inc index}} Details:</span>
-      {{#if result.attributes.internal_axon_id}}
-        <div>
-          <span class="p-key">Axonius ID:</span>
-          <a href="{{block.userOptions.url}}/users/{{result.attributes.internal_axon_id}}" class="p-link"> {{result.attributes.internal_axon_id}} {{fa-icon "external-link-square" class="external-link-icon"}}</a>
-        </div>
-      {{/if}}
-    {{/if}}
-    {{#if result.attributes.specific_data.data.hostname}}
+    <span class="p-title">{{fa-icon icon="phone-laptop" fixedWidth=true}} Device #{{inc index}} Details:</span>
+    {{#if result.attributes.internal_axon_id}}
       <div>
-        <span class="p-key">Host Name:</span>
-        {{#each result.attributes.specific_data.data.hostname as |hostname|}}
-          <span class="p-value">{{hostname}}</span>
-        {{/each}}
+        <span class="p-key">Axonius ID:</span>
+        <a href="{{block.userOptions.url}}/devices/{{result.attributes.internal_axon_id}}" class="p-link"> {{result.attributes.internal_axon_id}} {{fa-icon "external-link-square" class="external-link-icon"}}</a>
       </div>
     {{/if}}
-    {{#if result.attributes.specific_data.data.name}}
+  {{/if}}
+
+  {{!-- Email Type --}}
+  {{#if (eq block.entity.type "email")}}
+    {{#if (gt index 0)}}
+      <hr>
+    {{/if}}
+    <span class="p-title">{{fa-icon icon="user" fixedWidth=true}} User #{{inc index}} Details:</span>
+    {{#if result.attributes.internal_axon_id}}
       <div>
-        <span class="p-key">Asset Name:</span>
-        {{#each result.attributes.specific_data.data.name as |asset|}}
-          <span class="p-value">{{asset}}</span>
-        {{/each}}
+        <span class="p-key">Axonius ID:</span>
+        <a href="{{block.userOptions.url}}/users/{{result.attributes.internal_axon_id}}" class="p-link"> {{result.attributes.internal_axon_id}} {{fa-icon "external-link-square" class="external-link-icon"}}</a>
       </div>
     {{/if}}
-    {{#if result.attributes.specific_data.data.display_name}}
-      <div>
-        <span class="p-key">Display Name:</span>
-        {{#each result.attributes.specific_data.data.display_name as |name|}}
-          <span class="p-value">{{name}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if result.attributes.specific_data.data.employee_id}}
-      <div>
-        <span class="p-key">Employee ID:</span>
-        {{#each result.attributes.specific_data.data.employee_id as |id|}}
-          <span class="p-value">{{id}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if result.attributes.specific_data.data.is_local}}
-      <div>
-        <span class="p-key">Is Local:</span>
-        {{#each result.attributes.specific_data.data.is_local as |local|}}
-          <span class="p-value">{{local}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if result.attributes.specific_data.data.is_locked}}
-      <div>
-        <span class="p-key">Is Locked:</span>
-        {{#each result.attributes.specific_data.data.is_locked as |locked|}}
-          <span class="p-value">{{locked}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if result.attributes.specific_data.data.os.type_distribution_preferred}}
-      <div>
-        <span class="p-key">Preferred OS Type/Distro:</span>
-        <span class="p-value">{{result.attributes.specific_data.data.os.type_distribution_preferred}}</span>
-      </div>
-    {{/if}}
-    {{#if result.attributes.specific_data.data.network_interfaces.ips_preferred}}
-      <div>
-        <span class="p-key">Preferred IP(s):</span>
-        {{#each result.attributes.specific_data.data.network_interfaces.ips_preferred as |ip|}}
-          <span class="p-value">{{ip}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if result.attributes.specific_data.data.network_interfaces.mac_preferred}}
-      <div>
-        <span class="p-key">Preferred MAC(s):</span>
-        {{#each result.attributes.specific_data.data.network_interfaces.mac_preferred as |mac|}}
-          <span class="p-value">{{mac}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if result.attributes.specific_data.data.last_used_users}}
-      <div>
-        <span class="p-key">Last Used User(s):</span>
-        {{#each result.attributes.specific_data.data.last_used_users as |user|}}
-          <span class="p-value">{{user}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if result.attributes.specific_data.data.last_used_users_mail_association}}
-      <div>
-        <span class="p-key">Last Used User(s) Email:</span>
-        {{#each result.attributes.specific_data.data.last_used_users_mail_association as |email|}}
-          <span class="p-value">{{email}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if result.attributes.specific_data.data.first_fetch_time}}
-      <div>
-        <span class="p-key">First Fetch Time:</span>
-        <span class="p-value">{{result.attributes.specific_data.data.first_fetch_time}}</span>
-      </div>
-    {{/if}}
-    {{#if result.attributes.specific_data.data.last_seen}}
-      <div>
-        <span class="p-key">Last Seen:</span>
-        <span class="p-value">{{result.attributes.specific_data.data.last_seen}}</span>
-      </div>
-    {{/if}}
-    {{#if result.attributes.labels}}
-      <h1 class="p-title">{{fa-icon "tags" fixedWidth=true}}Tags: </h1>
-      {{#each result.attributes.labels as |label|}}
-        <span class="source-tag">{{label}}</span>
+  {{/if}}
+
+  {{!-- All Types --}}
+  {{#if result.attributes.specific_data.data.hostname}}
+    <div>
+      <span class="p-key">Host Name:</span>
+      {{#each result.attributes.specific_data.data.hostname as |hostname|}}
+        <span class="p-value">{{hostname}}</span>
       {{/each}}
-    {{/if}}
-    {{#if result.attributes.specific_data.data.installed_software}}
-      <h1 class="p-title">{{fa-icon "save" fixedWidth=true}}Installed Software: </h1>
-      {{#each result.attributes.specific_data.data.installed_software as |software|}}
-        <table class="p-table" style="margin-top:5px;">
-          <tbody>
-            <tr><td>{{software.name_version}}</td></tr>
-          </tbody>
-        </table>
+    </div>
+  {{/if}}
+  {{#if result.attributes.specific_data.data.name}}
+    <div>
+      <span class="p-key">Asset Name:</span>
+      {{#each result.attributes.specific_data.data.name as |asset|}}
+        <span class="p-value">{{asset}}</span>
       {{/each}}
-    {{/if}}
-    {{#if result.attributes.specific_data.data.security_patches}}
-      <h1 class="p-title">{{fa-icon "shield-alt" fixedWidth=true}}Security Patches: </h1>
-      {{#each result.attributes.specific_data.data.security_patches as |patch|}}
-        <table class="p-table" style="margin-top:5px;">
-          <tbody>
-            <tr><td>{{patch.security_patch_id}}</td></tr>
-          </tbody>
-        </table>
+    </div>
+  {{/if}}
+  {{#if result.attributes.specific_data.data.display_name}}
+    <div>
+      <span class="p-key">Display Name:</span>
+      <span class="p-value">{{result.attributes.specific_data.data.display_name}}</span>
+    </div>
+  {{/if}}
+  {{#if result.attributes.specific_data.data.employee_id}}
+    <div>
+      <span class="p-key">Employee ID:</span>
+      <span class="p-value">{{result.attributes.specific_data.data.employee_id}}</span>
+    </div>
+  {{/if}}
+  {{#if (not (is-empty result.attributes.specific_data.data.is_local))}}
+    <div>
+      <span class="p-key">Is Local:</span>
+      <span class="p-value">{{result.attributes.specific_data.data.is_local}}</span>
+    </div>
+  {{/if}}
+  {{#if (not (is-empty result.attributes.specific_data.data.is_locked))}}
+    <div>
+      <span class="p-key">Is Locked:</span>
+      <span class="p-value">{{result.attributes.specific_data.data.is_locked}}</span>
+    </div>
+  {{/if}}
+  {{#if result.attributes.specific_data.data.os.type_distribution_preferred}}
+    <div>
+      <span class="p-key">Preferred OS Type/Distro:</span>
+      <span class="p-value">{{result.attributes.specific_data.data.os.type_distribution_preferred}}</span>
+    </div>
+  {{/if}}
+  {{#if result.attributes.specific_data.data.network_interfaces.ips_preferred}}
+    <div>
+      <span class="p-key">Preferred IP(s):</span>
+      {{#each result.attributes.specific_data.data.network_interfaces.ips_preferred as |ip|}}
+        <span class="p-value">{{ip}}</span>
       {{/each}}
-    {{/if}}
-    {{#if result.attributes.specific_data.data.open_ports}}
-      <h1 class="p-title">{{fa-icon "door-open" fixedWidth=true}}Open Ports: </h1>
-      {{#each result.attributes.specific_data.data.open_ports as |port|}}
-        <div class="service-pill">
-          <span class="port">{{port.port_id}}</span><span class="service">{{port.protocol}}</span>
-        </div>
+    </div>
+  {{/if}}
+  {{#if result.attributes.specific_data.data.network_interfaces.mac_preferred}}
+    <div>
+      <span class="p-key">Preferred MAC(s):</span>
+      {{#each result.attributes.specific_data.data.network_interfaces.mac_preferred as |mac|}}
+        <span class="p-value">{{mac}}</span>
       {{/each}}
-    {{/if}}
-    {{#if result.attributes.adapters}}
-      <h1 class="p-title">{{fa-icon "plus-square" fixedWidth=true}}Adapters: </h1>
-      {{#each result.attributes.adapters as |adapter|}}
-        <span class="source-tag">{{adapter}}</span>
+    </div>
+  {{/if}}
+  {{#if result.attributes.specific_data.data.last_used_users}}
+    <div>
+      <span class="p-key">Last Used User(s):</span>
+      {{#each result.attributes.specific_data.data.last_used_users as |user|}}
+        <span class="p-value">{{user}}</span>
       {{/each}}
-    {{/if}}
-  {{/each}}
-  <hr>
-{{/if}}
+    </div>
+  {{/if}}
+  {{#if result.attributes.specific_data.data.last_used_users_mail_association}}
+    <div>
+      <span class="p-key">Last Used User(s) Email:</span>
+      {{#each result.attributes.specific_data.data.last_used_users_mail_association as |email|}}
+        <span class="p-value">{{email}}</span>
+      {{/each}}
+    </div>
+  {{/if}}
+  {{#if result.attributes.specific_data.data.first_fetch_time}}
+    <div>
+      <span class="p-key">First Fetch Time:</span>
+      <span class="p-value">{{result.attributes.specific_data.data.first_fetch_time}}</span>
+    </div>
+  {{/if}}
+  {{#if result.attributes.specific_data.data.last_seen}}
+    <div>
+      <span class="p-key">Last Seen:</span>
+      <span class="p-value">{{result.attributes.specific_data.data.last_seen}}</span>
+    </div>
+  {{/if}}
+  {{#if result.attributes.labels}}
+    <h1 class="p-title">{{fa-icon "tags" fixedWidth=true}}Tags: </h1>
+    {{#each result.attributes.labels as |label|}}
+      <span class="source-tag">{{label}}</span>
+    {{/each}}
+  {{/if}}
+  {{#if result.attributes.specific_data.data.installed_software}}
+    <h1 class="p-title">{{fa-icon "save" fixedWidth=true}}Installed Software: </h1>
+    {{#each result.attributes.specific_data.data.installed_software as |software|}}
+      <table class="p-table" style="margin-top:5px;">
+        <tbody>
+          <tr><td>{{software.name_version}}</td></tr>
+        </tbody>
+      </table>
+    {{/each}}
+  {{/if}}
+  {{#if result.attributes.specific_data.data.security_patches}}
+    <h1 class="p-title">{{fa-icon "shield-alt" fixedWidth=true}}Security Patches: </h1>
+    {{#each result.attributes.specific_data.data.security_patches as |patch|}}
+      <table class="p-table" style="margin-top:5px;">
+        <tbody>
+          <tr><td>{{patch.security_patch_id}}</td></tr>
+        </tbody>
+      </table>
+    {{/each}}
+  {{/if}}
+  {{#if result.attributes.specific_data.data.open_ports}}
+    <h1 class="p-title">{{fa-icon "door-open" fixedWidth=true}}Open Ports: </h1>
+    {{#each result.attributes.specific_data.data.open_ports as |port|}}
+      <div class="service-pill">
+        <span class="port">{{port.port_id}}</span><span class="service">{{port.protocol}}</span>
+      </div>
+    {{/each}}
+  {{/if}}
+  {{#if result.attributes.adapters}}
+    <h1 class="p-title">{{fa-icon "plus-square" fixedWidth=true}}Adapters: </h1>
+    {{#each result.attributes.adapters as |adapter|}}
+      <span class="source-tag">{{adapter}}</span>
+    {{/each}}
+  {{/if}}
+{{/each}}

@@ -43,14 +43,6 @@ module.exports = {
       file: './templates/block.hbs'
     }
   },
-  summary: {
-    component: {
-      file: './components/summary.js'
-    },
-    template: {
-      file: './templates/summary.hbs'
-    }
-  },
   request: {
     // Provide the path to your certFile. Leave an empty string to ignore this option.
     // Relative paths are relative to the Axonius integration's root directory
@@ -66,9 +58,7 @@ module.exports = {
     ca: '',
     // An HTTP proxy to be used. Supports proxy Auth with Basic Auth, identical to support for
     // the url parameter (by embedding the auth info in the uri)
-    proxy: '',
-
-    rejectUnauthorized: true
+    proxy: ''
   },
   logging: {
     level: 'info' //trace, debug, info, warn, error, fatal
@@ -111,8 +101,7 @@ module.exports = {
     {
       key: 'searchLimit',
       name: 'Search Result Limit',
-      description:
-        'Maximum number of query results to return in the Polarity overlay.',
+      description: 'Maximum number of query results to return in the Polarity overlay.',
       default: 10,
       type: 'number',
       userCanEdit: false,

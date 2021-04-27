@@ -1,6 +1,8 @@
 # Polarity Axonius Integration
 
-The Polarity Axonius integration allows Polarity to search the Axonius API to return event information on internal users and assets.  The integration supports asset lookup by IP address or FQDN (domain) and user lookups via e-mail address.
+The Polarity Axonius integration allows Polarity to search the Axonius API to return event information on internal users and assets.  The integration supports device lookups by preferred IP address and hostname (domains) fields. In addition, user lookups are supported via e-mail address.
+
+Note that hostname lookups search both the hostname and preferred hostname field.
 
 <img width="350" alt="Axonius IP Example" src="./images/overlay.png">
 

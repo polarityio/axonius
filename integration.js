@@ -67,7 +67,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
     fp.reduce((acc, [k, v]) => fp.set(k, v, acc), {})
   );
 
-  Logger.debug(entities);
+  Logger.debug({ entities }, 'doLookup entities');
 
   entities.forEach((entity) => {
     let requestOptions = {
@@ -110,7 +110,12 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
               ]
             },
             include_details: false,
-            filter: '(specific_data.data.hostname_preferred == "' + entity.value.toUpperCase() + '")',
+            filter:
+              '(specific_data.data.hostname == "' +
+              entity.value.toUpperCase() +
+              '") or (specific_data.data.preferred_hostname == "' +
+              entity.value.toUpperCase() +
+              '")',
             use_cursor: true,
             include_notes: false,
             page: {
@@ -208,7 +213,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
           return done(error);
         }
 
-        Logger.trace(requestOptions);
+        Logger.trace({ requestOptions }, 'Request Options');
 
         let result = {};
 
@@ -223,35 +228,36 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
             body: null
           };
         } else {
-          let error = {
-            err: body,
-            detail: `${body.error}: ${body.message}`
-          };
+          let error;
           if (res.statusCode === 401) {
             error = {
               err: 'Unauthorized',
-              detail:
-                'Request had Authorization header but token was missing or invalid. Please ensure your API key is valid.'
+              body,
+              detail: 'Invalid API key or secret. Ensure your API key and secret are valid.'
             };
           } else if (res.statusCode === 403) {
             error = {
               err: 'Access Denied',
+              body,
               detail: 'Not enough access permissions.'
             };
           } else if (res.statusCode === 404) {
             error = {
               err: 'Not Found',
+              body,
               detail: 'Requested item doesn’t exist or not enough access permissions.'
             };
           } else if (res.statusCode === 429) {
             error = {
               err: 'Too Many Requests',
+              body,
               detail:
                 'Daily number of requests exceeds limit. Check Retry-After header to get information about request delay.'
             };
-          } else if (Math.round(res.statusCode / 10) * 10 === 500) {
+          } else {
             error = {
               err: 'Server Error',
+              body,
               detail: 'Unexpected Server Error'
             };
           }
@@ -282,15 +288,62 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
         lookupResults.push({
           entity: result.entity,
           data: {
-            summary: [],
+            summary: getSummaryTags(result.entity, expandedBody),
             details: expandedBody
           }
         });
       }
     });
-    Logger.debug({ lookupResults }, "Results");
+    Logger.debug({ lookupResults }, 'Results');
     cb(null, lookupResults);
   });
+}
+
+function getIp(result) {
+  const preferredIps = fp.get('attributes.specific_data.data.network_interfaces.ips_preferred')(result);
+  if (Array.isArray(preferredIps) && preferredIps.length > 0) {
+    return preferredIps[0];
+  }
+  return null;
+}
+
+function getSummaryTags(entity, expandedBody) {
+  const tags = [];
+  let isUser = false;
+  // Check for specific fields on the first result
+  if (expandedBody.data.length > 0) {
+    const result = expandedBody.data[0];
+    const hostname = fp.get('attributes.specific_data.data.hostname')(result);
+    const ip = getIp(result);
+    const user = fp.get('attributes.specific_data.data.last_used_users')(result);
+    const displayName = fp.get('attributes.specific_data.data.display_name')(result);
+    if (entity.isIP && hostname) {
+      tags.push(hostname);
+    }
+    if (entity.isDomain && ip) {
+      tags.push(ip);
+    }
+    if (user) {
+      tags.push(`User: ${user}`);
+    }
+    if (displayName) {
+      tags.push(displayName);
+      isUser = true;
+    }
+  }
+
+  // There could be more than one result but we only show specific tags for the first
+  // Show how many other results there are
+  if (expandedBody.data.length > 1) {
+    tags.push(`+${expandedBody.data.length - 1} ${isUser ? 'users' : 'devices'}`);
+  }
+
+  // Ensure we have at least one tag
+  if (tags.length === 0) {
+    tags.push(`${expandedBody.data.length} results`);
+  }
+
+  return tags;
 }
 
 function validateUrl(errors, url) {
