@@ -228,10 +228,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
             body: null
           };
         } else {
-          let error = {
-            err: body,
-            detail: `${body.error}: ${body.message}`
-          };
+          let error;
           if (res.statusCode === 401) {
             error = {
               err: 'Unauthorized',
@@ -254,7 +251,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
               detail:
                 'Daily number of requests exceeds limit. Check Retry-After header to get information about request delay.'
             };
-          } else if (Math.round(res.statusCode / 10) * 10 === 500) {
+          } else {
             error = {
               err: 'Server Error',
               detail: 'Unexpected Server Error'
