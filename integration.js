@@ -254,6 +254,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
           } else {
             error = {
               err: 'Server Error',
+              body,
               detail: 'Unexpected Server Error'
             };
           }
