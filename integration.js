@@ -67,7 +67,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
     fp.reduce((acc, [k, v]) => fp.set(k, v, acc), {})
   );
 
-  Logger.debug(entities);
+  Logger.debug({ entities }, 'doLookup entities');
 
   entities.forEach((entity) => {
     let requestOptions = {
@@ -110,7 +110,12 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
               ]
             },
             include_details: false,
-            filter: '(specific_data.data.hostname_preferred == "' + entity.value.toUpperCase() + '")',
+            filter:
+              '(specific_data.data.hostname == "' +
+              entity.value.toUpperCase() +
+              '") or (specific_data.data.preferred_hostname == "' +
+              entity.value.toUpperCase() +
+              '")',
             use_cursor: true,
             include_notes: false,
             page: {
@@ -282,15 +287,62 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
         lookupResults.push({
           entity: result.entity,
           data: {
-            summary: [`Search Result Count: ${expandedBody.data.length}`],
+            summary: getSummaryTags(result.entity, expandedBody),
             details: expandedBody
           }
         });
       }
     });
-    Logger.debug({ lookupResults }, "Results");
+    Logger.debug({ lookupResults }, 'Results');
     cb(null, lookupResults);
   });
+}
+
+function getIp(result) {
+  const preferredIps = fp.get('attributes.specific_data.data.network_interfaces.ips_preferred')(result);
+  if (Array.isArray(preferredIps) && preferredIps.length > 0) {
+    return preferredIps[0];
+  }
+  return null;
+}
+
+function getSummaryTags(entity, expandedBody) {
+  const tags = [];
+  let isUser = false;
+  // Check for specific fields on the first result
+  if (expandedBody.data.length > 0) {
+    const result = expandedBody.data[0];
+    const hostname = fp.get('attributes.specific_data.data.hostname')(result);
+    const ip = getIp(result);
+    const user = fp.get('attributes.specific_data.data.last_used_users')(result);
+    const displayName = fp.get('attributes.specific_data.data.display_name')(result);
+    if (entity.isIP && hostname) {
+      tags.push(hostname);
+    }
+    if (entity.isDomain && ip) {
+      tags.push(ip);
+    }
+    if (user) {
+      tags.push(`User: ${user}`);
+    }
+    if (displayName) {
+      tags.push(displayName);
+      isUser = true;
+    }
+  }
+
+  // There could be more than one result but we only show specific tags for the first
+  // Show how many other results there are
+  if (expandedBody.data.length > 1) {
+    tags.push(`+${expandedBody.data.length - 1} ${isUser ? 'users' : 'devices'}`);
+  }
+
+  // Ensure we have at least one tag
+  if (tags.length === 0) {
+    tags.push(`${expandedBody.data.length} results`);
+  }
+
+  return tags;
 }
 
 function validateUrl(errors, url) {
