@@ -213,7 +213,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
           return done(error);
         }
 
-        Logger.trace(requestOptions);
+        Logger.trace({ requestOptions }, 'Request Options');
 
         let result = {};
 
@@ -232,22 +232,25 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
           if (res.statusCode === 401) {
             error = {
               err: 'Unauthorized',
-              detail:
-                'Request had Authorization header but token was missing or invalid. Please ensure your API key is valid.'
+              body,
+              detail: 'Invalid API key or secret. Ensure your API key and secret are valid.'
             };
           } else if (res.statusCode === 403) {
             error = {
               err: 'Access Denied',
+              body,
               detail: 'Not enough access permissions.'
             };
           } else if (res.statusCode === 404) {
             error = {
               err: 'Not Found',
+              body,
               detail: 'Requested item doesn’t exist or not enough access permissions.'
             };
           } else if (res.statusCode === 429) {
             error = {
               err: 'Too Many Requests',
+              body,
               detail:
                 'Daily number of requests exceeds limit. Check Retry-After header to get information about request delay.'
             };
