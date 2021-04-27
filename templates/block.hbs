@@ -47,41 +47,25 @@
   {{#if result.attributes.specific_data.data.display_name}}
     <div>
       <span class="p-key">Display Name:</span>
-      {{#if (is-array result.attributes.specific_data.data.display_name)}}
-        {{#each result.attributes.specific_data.data.display_name as |name|}}
-          <span class="p-value">{{name}}</span>
-        {{/each}}
-      {{else}}
-          <span class="p-value">{{result.attributes.specific_data.data.display_name}}</span>
-      {{/if}}
+      <span class="p-value">{{result.attributes.specific_data.data.display_name}}</span>
     </div>
   {{/if}}
   {{#if result.attributes.specific_data.data.employee_id}}
     <div>
       <span class="p-key">Employee ID:</span>
-      {{#if (is-array result.attributes.specific_data.data.employee_id)}}
-        {{#each result.attributes.specific_data.data.employee_id as |id|}}
-          <span class="p-value">{{id}}</span>
-        {{/each}}
-      {{else}}
-        <span class="p-value">{{result.attributes.specific_data.data.employee_id}}</span>
-      {{/if}}
+      <span class="p-value">{{result.attributes.specific_data.data.employee_id}}</span>
     </div>
   {{/if}}
-  {{#if result.attributes.specific_data.data.is_local}}
+  {{#if (not (is-empty result.attributes.specific_data.data.is_local))}}
     <div>
       <span class="p-key">Is Local:</span>
-      {{#each result.attributes.specific_data.data.is_local as |local|}}
-        <span class="p-value">{{local}}</span>
-      {{/each}}
+      <span class="p-value">{{result.attributes.specific_data.data.is_local}}</span>
     </div>
   {{/if}}
-  {{#if result.attributes.specific_data.data.is_locked}}
+  {{#if (not (is-empty result.attributes.specific_data.data.is_locked))}}
     <div>
       <span class="p-key">Is Locked:</span>
-      {{#each result.attributes.specific_data.data.is_locked as |locked|}}
-        <span class="p-value">{{locked}}</span>
-      {{/each}}
+      <span class="p-value">{{result.attributes.specific_data.data.is_locked}}</span>
     </div>
   {{/if}}
   {{#if result.attributes.specific_data.data.os.type_distribution_preferred}}
