@@ -4,7 +4,9 @@ The Polarity Axonius integration allows Polarity to search the Axonius API to re
 
 Note that hostname lookups search both the hostname and preferred hostname field.
 
-<img width="350" alt="Axonius IP Example" src="./images/overlay.png">
+| ![device lookup example](assets/overlay-ip.png) | ![user lookup example](assets/overlay-email.png) |
+|---|---|
+|*Lookup Device by IP* | *Lookup User by Email* |
 
 To learn more about Axonius please see their official website at [https://www.axonius.com/](https://www.axonius.com/)
 
