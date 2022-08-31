@@ -6,6 +6,8 @@ Note that hostname lookups search both the assetname, hostname, and preferred ho
 
 The integration includes a custom hostname entity type that will match on strings that are between 5 and 25 characters and contain only valid hostname characters (i.e., lowercase and uppercase "a-z", digits "0-9", and a dash "-").
 
+Custom hostname matches include partial matches on the hostname.  For example, if you search on the string `server`, then it will match hostnames that include `server` in them such as `server-01`, `server-02`, `server-03`, etc.
+
 | ![device lookup example](assets/overlay-ip.png) | ![user lookup example](assets/overlay-email.png) |
 |---|---|
 |*Lookup Device by IP* | *Lookup User by Email* |
@@ -25,6 +27,10 @@ Valid Axonius API secret associated with the provided key.  Also available via h
 
 ### Search Result Limit
 Maximum number of Axonius search results to return in the Polarity overlay window.
+
+### Only return exact matches for hostnames
+
+If checked, the integration will only return exact matches on hostnames.
 
 ## Installation Instructions
 

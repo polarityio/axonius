@@ -97,8 +97,8 @@ module.exports = {
       description: 'Valid Axonius API Key.',
       default: '',
       type: 'password',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'apiSecret',
@@ -106,8 +106,8 @@ module.exports = {
       description: 'Valid Axonius API Secret.',
       default: '',
       type: 'password',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'searchLimit',
@@ -115,6 +115,15 @@ module.exports = {
       description: 'Maximum number of query results to return in the Polarity overlay.',
       default: 10,
       type: 'number',
+      userCanEdit: false,
+      adminOnly: true
+    },
+    {
+      key: 'exactMatchHostname',
+      name: 'Only return exact matches for hostnames',
+      description: 'If checked, the integration will only return exact matches on hostnames.',
+      default: false,
+      type: 'boolean',
       userCanEdit: false,
       adminOnly: true
     }

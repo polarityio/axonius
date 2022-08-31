@@ -110,9 +110,14 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
               ]
             },
             include_details: false,
-            filter: `(specific_data.data.name == regex("${entity.value.trim()}", "i")) or ` +
-               `(specific_data.data.hostname == regex("${entity.value.trim()}", "i")) or ` +
-               `(specific_data.data.preferred_hostname == regex("${entity.value.trim()}", "i"))`,
+            filter: options.exactMatchHostname ?
+                `(specific_data.data.name == regex("^${entity.value.trim()}$", "i")) or ` +
+               `(specific_data.data.hostname == regex("^${entity.value.trim()}$", "i")) or ` +
+               `(specific_data.data.preferred_hostname == regex("^${entity.value.trim()}$", "i"))`
+                :
+                `(specific_data.data.name == regex("${entity.value.trim()}", "i")) or ` +
+                `(specific_data.data.hostname == regex("${entity.value.trim()}", "i")) or ` +
+                `(specific_data.data.preferred_hostname == regex("${entity.value.trim()}", "i"))`,
             use_cursor: true,
             include_notes: false,
             page: {
