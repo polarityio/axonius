@@ -25,6 +25,16 @@ module.exports = {
   description:
     'Axonius cybersecurity asset management solutions offer a comprehensive IT asset inventory, empowering users to enforce their network security policies.',
   entityTypes: ['IPv4', 'domain', 'email'],
+  customTypes: [
+    {
+      key: 'hostname',
+      // Captures "hostnames" between 5 and 25 characters where valid characters are a-z, A-Z, 0-9 and a dash.
+      // Ensures that the hostname is not part of a larger piece of text by rejecting any text with newlines
+      // before or after the hostname.  Does allow for spaces and tabs to occur before or after the hostname.
+      regex: /^(?<!\n|\r\n)[ \t]*[a-zA-Z0-9\-]{5,25}[ \t]*(?!\n|\r\n)$/
+    }
+  ],
+  onDemandOnly: true,
   styles: ['./styles/style.less'],
   defaultColor: 'light-blue',
   /**

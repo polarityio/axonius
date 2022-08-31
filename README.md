@@ -1,8 +1,10 @@
 # Polarity Axonius Integration
 
-The Polarity Axonius integration allows Polarity to search the Axonius API to return event information on internal users and assets.  The integration supports device lookups by preferred IP address and hostname (domains) fields. In addition, user lookups are supported via e-mail address.
+The Polarity Axonius integration allows Polarity to search the Axonius API to return event information on internal users and assets.  The integration supports device lookups by preferred IP address, domain and a custom hostname type. In addition, user lookups are supported via e-mail address.
 
-Note that hostname lookups search both the hostname and preferred hostname field.
+Note that hostname lookups search both the assetname, hostname, and preferred hostname fields.
+
+The integration includes a custom hostname entity type that will match on strings that are between 5 and 25 characters and contain only valid hostname characters (i.e., lowercase and uppercase "a-z", digits "0-9", and a dash "-").
 
 | ![device lookup example](assets/overlay-ip.png) | ![user lookup example](assets/overlay-email.png) |
 |---|---|
