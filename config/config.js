@@ -25,6 +25,16 @@ module.exports = {
   description:
     'Axonius cybersecurity asset management solutions offer a comprehensive IT asset inventory, empowering users to enforce their network security policies.',
   entityTypes: ['IPv4', 'domain', 'email'],
+  customTypes: [
+    {
+      key: 'hostname',
+      // Captures "hostnames" between 5 and 25 characters where valid characters are a-z, A-Z, 0-9 and a dash.
+      // Ensures that the hostname is not part of a larger piece of text by rejecting any text with newlines
+      // before or after the hostname.  Does allow for spaces and tabs to occur before or after the hostname.
+      regex: /^(?<!\n|\r\n)[ \t]*[a-zA-Z0-9\-]{5,25}[ \t]*(?!\n|\r\n)$/
+    }
+  ],
+  onDemandOnly: true,
   styles: ['./styles/style.less'],
   defaultColor: 'light-blue',
   /**
@@ -87,8 +97,8 @@ module.exports = {
       description: 'Valid Axonius API Key.',
       default: '',
       type: 'password',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'apiSecret',
@@ -96,8 +106,8 @@ module.exports = {
       description: 'Valid Axonius API Secret.',
       default: '',
       type: 'password',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'searchLimit',
@@ -105,6 +115,15 @@ module.exports = {
       description: 'Maximum number of query results to return in the Polarity overlay.',
       default: 10,
       type: 'number',
+      userCanEdit: false,
+      adminOnly: true
+    },
+    {
+      key: 'exactMatchHostname',
+      name: 'Only return exact matches for hostnames',
+      description: 'If checked, the integration will only return exact matches on hostnames.',
+      default: false,
+      type: 'boolean',
       userCanEdit: false,
       adminOnly: true
     }
