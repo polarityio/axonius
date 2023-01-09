@@ -1,0 +1,87 @@
+{
+  "name": "Axonius",
+  "acronym": "AXON",
+  "description": "Axonius cybersecurity asset management solutions offer a comprehensive IT asset inventory, empowering users to enforce their network security policies.",
+  "entityTypes": [
+    "IPv4",
+    "domain",
+    "email"
+  ],
+  "customTypes": [
+    {
+      "key": "hostname",
+      "regex": "^(?<!\\n|\\r\\n)[ \\t]*[a-zA-Z0-9\\-]{5,25}[ \\t]*(?!\\n|\\r\\n)$"
+    }
+  ],
+  "onDemandOnly": true,
+  "styles": [
+    "./styles/style.less"
+  ],
+  "defaultColor": "light-blue",
+  "block": {
+    "component": {
+      "file": "./components/block.js"
+    },
+    "template": {
+      "file": "./templates/block.hbs"
+    }
+  },
+  "request": {
+    "cert": "",
+    "key": "",
+    "passphrase": "",
+    "ca": "",
+    "proxy": "",
+    "rejectUnauthorized": true
+  },
+  "logging": {
+    "level": "info"
+  },
+  "options": [
+    {
+      "key": "url",
+      "name": "Axonius URL",
+      "description": "The base URL for your Axonius instance including the schema (i.e., https://myaxonius)",
+      "type": "text",
+      "default": "",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "apiKey",
+      "name": "API Key",
+      "description": "Valid Axonius API Key.",
+      "default": "",
+      "type": "password",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "apiSecret",
+      "name": "API Secret",
+      "description": "Valid Axonius API Secret.",
+      "default": "",
+      "type": "password",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "searchLimit",
+      "name": "Search Result Limit",
+      "description": "Maximum number of query results to return in the Polarity overlay.",
+      "default": 10,
+      "type": "number",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "exactMatchHostname",
+      "name": "Only return exact matches for hostnames",
+      "description": "If checked, the integration will only return exact matches on hostnames.",
+      "default": false,
+      "type": "boolean",
+      "userCanEdit": false,
+      "adminOnly": true
+    }
+  ]
+}
