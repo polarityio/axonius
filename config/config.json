@@ -3,11 +3,20 @@
   "name": "Axonius",
   "acronym": "AXON",
   "description": "Axonius cybersecurity asset management solutions offer a comprehensive IT asset inventory, empowering users to enforce their network security policies.",
-  "entityTypes": [
+  "dataTypes": [
     "IPv4",
     "domain",
-    "email"
+    "email",
+    {
+      "name": "Hostname",
+      "description": "Hostname Regex",
+      "editable": true,
+      "enabled": true,
+      "key": "hostname",
+      "regex": "^(?<!\\n|\\r\\n)[ \\t]*[a-zA-Z0-9\\-]{5,25}[ \\t]*(?!\\n|\\r\\n)$"
+    }
   ],
+  "entityTypes": ["IPv4", "domain", "email"],
   "customTypes": [
     {
       "key": "hostname",
@@ -15,9 +24,7 @@
     }
   ],
   "onDemandOnly": true,
-  "styles": [
-    "./styles/style.less"
-  ],
+  "styles": ["./styles/style.less"],
   "defaultColor": "light-blue",
   "block": {
     "component": {
@@ -26,13 +33,6 @@
     "template": {
       "file": "./templates/block.hbs"
     }
-  },
-  "request": {
-    "cert": "",
-    "key": "",
-    "passphrase": "",
-    "ca": "",
-    "proxy": ""
   },
   "logging": {
     "level": "info"
