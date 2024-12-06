@@ -8,6 +8,7 @@
     "domain",
     "email",
     {
+      "type": "custom",
       "name": "Hostname",
       "description": "Hostname Regex",
       "editable": true,
