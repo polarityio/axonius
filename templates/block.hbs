@@ -158,4 +158,35 @@
       <span class="source-tag">{{adapter}}</span>
     {{/each}}
   {{/if}}
+  {{#if result.attributes.specific_data.data.associated_devices}}
+    <h1 class="p-title">{{fa-icon icon="laptop" fixedWidth=true}} Associated Devices</h1>
+    {{#each result.attributes.specific_data.data.associated_devices as | device |}}
+      <div class="mb-2">
+        <div>
+          <span class="p-key">Device Name:</span>
+          <span class="p-value">{{device.device_caption}}</span>
+        </div>
+        {{#if device.device_serial}}
+          <div>
+            <span class="p-key">Device Serial #:</span>
+            <span class="p-value">{{device.device_serial}}</span>
+          </div>
+        {{/if}}
+        {{#if device.device_labels}}
+          <div>
+            <span class="p-key">Device Tags:</span>
+            <span class="p-value">{{device.device_labels}}</span>
+          </div>
+        {{/if}}
+        <div>
+          <span class="p-key">Device Unique Id:</span>
+          <span class="p-value">
+            <a class="p-link" href="{{block.userOptions.url}}/devices/{{device.device_id}}">
+              {{device.device_id}} {{fa-icon "external-link-square" class="external-link-icon"}}
+            </a>
+          </span>
+        </div>
+      </div>
+    {{/each}}
+  {{/if}}
 {{/each}}
