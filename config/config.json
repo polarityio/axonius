@@ -10,9 +10,9 @@
     {
       "type": "custom",
       "name": "Hostname",
-      "description": "Hostname Regex",
+      "description": "Matches on possible Hostnames lookups which can be a single search term between 5 and 25 characters using A-Z, 0-9 and dashes.",
       "editable": true,
-      "enabled": true,
+      "enabled": false,
       "key": "hostname",
       "regex": "^(?<!\\n|\\r\\n)[ \\t]*[a-zA-Z0-9\\-]{5,25}[ \\t]*(?!\\n|\\r\\n)$"
     }
