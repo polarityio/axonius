@@ -80,7 +80,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
     };
 
     if (entity.isDomain || entity.types.includes('custom.hostname')) {
-      requestOptions.uri = `${options.url}/api/V4.0/devices`;
+      requestOptions.uri = `${options.url}/api/devices`;
       requestOptions.body = {
         data: {
           type: 'entity_request_schema',
@@ -128,7 +128,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
         }
       };
     } else if (entity.isIPv4) {
-      requestOptions.uri = `${options.url}/api/V4.0/devices`;
+      requestOptions.uri = `${options.url}/api/devices`;
       requestOptions.body = {
         data: {
           type: 'entity_request_schema',
@@ -169,7 +169,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
         }
       };
     } else if (entity.isEmail) {
-      requestOptions.uri = `${options.url}/api/V4.0/users`;
+      requestOptions.uri = `${options.url}/api/users`;
       requestOptions.body = {
         data: {
           type: 'entity_request_schema',
