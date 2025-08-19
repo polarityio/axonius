@@ -1,9 +1,7 @@
 'use strict';
 
 const request = require('postman-request');
-const config = require('./config/config');
 const async = require('async');
-const fs = require('fs');
 const fp = require('lodash/fp');
 
 let Logger;
@@ -18,34 +16,10 @@ const MAX_PARALLEL_LOOKUPS = 10;
  * @param cb
  */
 function startup(logger) {
-  let defaults = {};
+  let defaults = {
+    json: true
+  };
   Logger = logger;
-
-  const { cert, key, passphrase, ca, proxy, rejectUnauthorized } = config.request;
-
-  if (typeof cert === 'string' && cert.length > 0) {
-    defaults.cert = fs.readFileSync(cert);
-  }
-
-  if (typeof key === 'string' && key.length > 0) {
-    defaults.key = fs.readFileSync(key);
-  }
-
-  if (typeof passphrase === 'string' && passphrase.length > 0) {
-    defaults.passphrase = passphrase;
-  }
-
-  if (typeof ca === 'string' && ca.length > 0) {
-    defaults.ca = fs.readFileSync(ca);
-  }
-
-  if (typeof proxy === 'string' && proxy.length > 0) {
-    defaults.proxy = proxy;
-  }
-
-  if (typeof rejectUnauthorized === 'boolean') {
-    defaults.rejectUnauthorized = rejectUnauthorized;
-  }
 
   requestWithDefaults = request.defaults(defaults);
 }
@@ -75,12 +49,11 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
       headers: {
         'api-key': options.apiKey,
         'api-secret': options.apiSecret
-      },
-      json: true
+      }
     };
 
     if (entity.isDomain || entity.types.includes('custom.hostname')) {
-      requestOptions.uri = `${options.url}/api/V4.0/devices`;
+      requestOptions.uri = `${options.url}/api/devices`;
       requestOptions.body = {
         data: {
           type: 'entity_request_schema',
@@ -110,12 +83,11 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
               ]
             },
             include_details: false,
-            filter: options.exactMatchHostname ?
-                `(specific_data.data.name == regex("^${entity.value.trim()}$", "i")) or ` +
-               `(specific_data.data.hostname == regex("^${entity.value.trim()}$", "i")) or ` +
-               `(specific_data.data.preferred_hostname == regex("^${entity.value.trim()}$", "i"))`
-                :
-                `(specific_data.data.name == regex("${entity.value.trim()}", "i")) or ` +
+            filter: options.exactMatchHostname
+              ? `(specific_data.data.name == regex("^${entity.value.trim()}$", "i")) or ` +
+                `(specific_data.data.hostname == regex("^${entity.value.trim()}$", "i")) or ` +
+                `(specific_data.data.preferred_hostname == regex("^${entity.value.trim()}$", "i"))`
+              : `(specific_data.data.name == regex("${entity.value.trim()}", "i")) or ` +
                 `(specific_data.data.hostname == regex("${entity.value.trim()}", "i")) or ` +
                 `(specific_data.data.preferred_hostname == regex("${entity.value.trim()}", "i"))`,
             use_cursor: true,
@@ -128,7 +100,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
         }
       };
     } else if (entity.isIPv4) {
-      requestOptions.uri = `${options.url}/api/V4.0/devices`;
+      requestOptions.uri = `${options.url}/api/devices`;
       requestOptions.body = {
         data: {
           type: 'entity_request_schema',
@@ -169,7 +141,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
         }
       };
     } else if (entity.isEmail) {
-      requestOptions.uri = `${options.url}/api/V4.0/users`;
+      requestOptions.uri = `${options.url}/api/users`;
       requestOptions.body = {
         data: {
           type: 'entity_request_schema',
