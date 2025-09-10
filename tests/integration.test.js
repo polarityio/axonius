@@ -368,7 +368,15 @@ describe('Axonius Integration Tests', () => {
       };
 
       nock(baseUrl)
-        .post('/api/v2/users', expectedQuery)
+        .post('/api/v2/users', (body) => {
+          return (
+            body.include_metadata === true &&
+            Array.isArray(body.fields) &&
+            body.query === '(specific_data.data.username == "test@example.com")' &&
+            body.page.offset === 0 &&
+            body.page.limit === 10
+          );
+        })
         .reply(200, { meta: { page: { totalResources: 0 } }, assets: [] });
 
       doLookup([mockEntity], options, (err, results) => {
