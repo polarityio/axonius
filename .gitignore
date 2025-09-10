@@ -1,3 +1,6 @@
+# Ignore All Aider History
+.aider*
+
 # Ignore Maven Compiled Project Files
 */target/
 

@@ -83,6 +83,15 @@
       "type": "boolean",
       "userCanEdit": false,
       "adminOnly": true
+    },
+    {
+      "key": "displayDataAsTable",
+      "name": "Display Data as Table",
+      "description": "If checked, the integration will display all data as a table.  This setting is for troubleshooting.",
+      "default": false,
+      "type": "boolean",
+      "userCanEdit": true,
+      "adminOnly": false
     }
   ]
 }
