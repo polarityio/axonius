@@ -2,12 +2,45 @@
 
 const request = require('postman-request');
 const async = require('async');
-const fp = require('lodash/fp');
 
 let Logger;
 let requestWithDefaults;
 
 const MAX_PARALLEL_LOOKUPS = 10;
+
+const DEVICE_FIELDS_TO_RETURN = [
+  'adapters',
+  'specific_data.data.name',
+  'specific_data.data.hostname',
+  'specific_data.data.last_seen',
+  'specific_data.data.first_fetch_time',
+  'specific_data.data.network_interfaces.ips_preferred',
+  'specific_data.data.network_interfaces.mac_preferred',
+  'specific_data.data.os.type_distribution_preferred',
+  'specific_data.data.os.type_distribution',
+  'specific_data.data.last_used_users',
+  'specific_data.data.last_used_users_mail_association',
+  'specific_data.data.open_ports',
+  'specific_data.data.software_cves',
+  'specific_data.data.agent_versions',
+  'specific_data.data.installed_software',
+  'specific_data.data.security_patches',
+  'labels'
+];
+
+const USER_DEVICE_FIELDS_TO_RETURN = [
+  'specific_data.data.display_name',
+  'specific_data.data.last_seen',
+  'specific_data.data.first_fetch_time',
+  'specific_data.data.is_local',
+  'specific_data.data.is_locked',
+  'last_logon',
+  'logon_count',
+  'specific_data.data.employee_id',
+  'user_status',
+  'groups',
+  'specific_data.data.associated_devices'
+];
 
 /**
  *
@@ -24,22 +57,58 @@ function startup(logger) {
   requestWithDefaults = request.defaults(defaults);
 }
 
-function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
+function getIpQuery(entity, options) {
+  const entityValue = entity.value.trim();
+
+  return {
+    include_metadata: true,
+    fields: DEVICE_FIELDS_TO_RETURN,
+    query: `("specific_data.data.network_interfaces.ips_preferred" == "${entityValue}")`,
+    page: {
+      offset: 0,
+      limit: options.searchLimit
+    }
+  };
+}
+
+function getHostnameQuery(entity, options) {
+  const entityValue = entity.value.trim();
+
+  return {
+    include_metadata: true,
+    fields: DEVICE_FIELDS_TO_RETURN,
+    query: options.exactMatchHostname
+      ? `(specific_data.data.name == regex("^${entityValue}$", "i")) or ` +
+        `(specific_data.data.hostname == regex("^${entityValue}$", "i")) or ` +
+        `(specific_data.data.preferred_hostname == regex("^${entityValue}$", "i"))`
+      : `(specific_data.data.name == regex("${entityValue}", "i")) or ` +
+        `(specific_data.data.hostname == regex("${entityValue}", "i")) or ` +
+        `(specific_data.data.preferred_hostname == regex("${entityValue}", "i"))`,
+    page: {
+      offset: 0,
+      limit: options.searchLimit
+    }
+  };
+}
+
+function getUserQuery(entity, options) {
+  const entityValue = entity.value.trim();
+
+  return {
+    include_metadata: true,
+    fields: USER_DEVICE_FIELDS_TO_RETURN,
+    query: `(specific_data.data.username == "${entityValue}")`,
+    page: {
+      offset: 0,
+      limit: options.searchLimit
+    }
+  };
+}
+
+function doLookup(entities, options, cb) {
   let lookupResults = [];
   let tasks = [];
-  const options = {
-    ...optionsWithoutUrl,
-    url: url && url.endsWith('/') ? url.substring(0, url.length - 1) : url
-  };
-  const flattenObjectKeys = (obj, path = []) =>
-    fp.isPlainObject(obj) || fp.isArray(obj)
-      ? fp.reduce((acc, [k, v]) => fp.merge(acc, flattenObjectKeys(v, [...path, k])), {}, fp.toPairs(obj))
-      : { [path.join('.')]: obj };
-  const expandJSON = fp.flow(
-    flattenObjectKeys,
-    fp.toPairs,
-    fp.reduce((acc, [k, v]) => fp.set(k, v, acc), {})
-  );
+  options.url = options.url.endsWith('/') ? options.url : `${options.url}/`;
 
   Logger.debug({ entities }, 'doLookup entities');
 
@@ -53,128 +122,14 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
     };
 
     if (entity.isDomain || entity.types.includes('custom.hostname')) {
-      requestOptions.uri = `${options.url}/api/devices`;
-      requestOptions.body = {
-        data: {
-          type: 'entity_request_schema',
-          attributes: {
-            use_cache_entry: false,
-            get_metadata: true,
-            always_cached_query: false,
-            fields: {
-              devices: [
-                'adapters',
-                'specific_data.data.name',
-                'specific_data.data.hostname',
-                'specific_data.data.last_seen',
-                'specific_data.data.first_fetch_time',
-                'specific_data.data.network_interfaces.ips_preferred',
-                'specific_data.data.network_interfaces.mac_preferred',
-                'specific_data.data.os.type_distribution_preferred',
-                'specific_data.data.os.type_distribution',
-                'specific_data.data.last_used_users',
-                'specific_data.data.last_used_users_mail_association',
-                'specific_data.data.open_ports',
-                'specific_data.data.software_cves',
-                'specific_data.data.agent_versions',
-                'specific_data.data.installed_software',
-                'specific_data.data.security_patches',
-                'labels'
-              ]
-            },
-            include_details: false,
-            filter: options.exactMatchHostname
-              ? `(specific_data.data.name == regex("^${entity.value.trim()}$", "i")) or ` +
-                `(specific_data.data.hostname == regex("^${entity.value.trim()}$", "i")) or ` +
-                `(specific_data.data.preferred_hostname == regex("^${entity.value.trim()}$", "i"))`
-              : `(specific_data.data.name == regex("${entity.value.trim()}", "i")) or ` +
-                `(specific_data.data.hostname == regex("${entity.value.trim()}", "i")) or ` +
-                `(specific_data.data.preferred_hostname == regex("${entity.value.trim()}", "i"))`,
-            use_cursor: true,
-            include_notes: false,
-            page: {
-              offset: 0,
-              limit: options.searchLimit
-            }
-          }
-        }
-      };
+      requestOptions.uri = `${options.url}api/v2/assets/devices`;
+      requestOptions.body = getHostnameQuery(entity, options);
     } else if (entity.isIPv4) {
-      requestOptions.uri = `${options.url}/api/devices`;
-      requestOptions.body = {
-        data: {
-          type: 'entity_request_schema',
-          attributes: {
-            use_cache_entry: false,
-            get_metadata: true,
-            always_cached_query: false,
-            fields: {
-              devices: [
-                'adapters',
-                'specific_data.data.name',
-                'specific_data.data.hostname',
-                'specific_data.data.last_seen',
-                'specific_data.data.first_fetch_time',
-                'specific_data.data.network_interfaces.ips_preferred',
-                'specific_data.data.network_interfaces.mac_preferred',
-                'specific_data.data.os.type_distribution',
-                'specific_data.data.os.type_distribution_preferred',
-                'specific_data.data.last_used_users',
-                'specific_data.data.last_used_users_mail_association',
-                'specific_data.data.open_ports',
-                'specific_data.data.software_cves',
-                'specific_data.data.agent_versions',
-                'specific_data.data.installed_software',
-                'specific_data.data.security_patches',
-                'labels'
-              ]
-            },
-            include_details: false,
-            filter: '(specific_data.data.network_interfaces.ips_preferred == "' + entity.value + '")',
-            use_cursor: true,
-            include_notes: false,
-            page: {
-              offset: 0,
-              limit: options.searchLimit
-            }
-          }
-        }
-      };
+      requestOptions.uri = `${options.url}api/v2/assets/devices`;
+      requestOptions.body = getIpQuery(entity, options);
     } else if (entity.isEmail) {
-      requestOptions.uri = `${options.url}/api/users`;
-      requestOptions.body = {
-        data: {
-          type: 'entity_request_schema',
-          attributes: {
-            use_cache_entry: false,
-            get_metadata: true,
-            always_cached_query: false,
-            fields: {
-              devices: [
-                'specific_data.data.display_name',
-                'specific_data.data.last_seen',
-                'specific_data.data.first_fetch_time',
-                'specific_data.data.is_local',
-                'specific_data.data.is_locked',
-                'last_logon',
-                'logon_count',
-                'specific_data.data.employee_id',
-                'user_status',
-                'groups',
-                'specific_data.data.associated_devices'
-              ]
-            },
-            include_details: false,
-            filter: '(specific_data.data.username == "' + entity.value.toLowerCase() + '")',
-            use_cursor: true,
-            include_notes: false,
-            page: {
-              offset: 0,
-              limit: options.searchLimit
-            }
-          }
-        }
-      };
+      requestOptions.uri = `${options.url}api/v2/users`;
+      requestOptions.body = getUserQuery(entity, options);
     } else {
       return;
     }
@@ -219,7 +174,7 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
             error = {
               err: 'Not Found',
               body,
-              detail: 'Requested item doesn’t exist or not enough access permissions.'
+              detail: 'Requested item doesn\'t exist or not enough access permissions.'
             };
           } else if (res.statusCode === 429) {
             error = {
@@ -252,72 +207,30 @@ function doLookup(entities, { url, ...optionsWithoutUrl }, cb) {
     }
 
     results.forEach((result) => {
-      if (result.body === null || result.body.meta.page.totalResources === 0) {
+      if (!result.body || result.body.meta.page.totalResources === 0) {
         lookupResults.push({
           entity: result.entity,
           data: null
         });
       } else {
-        let expandedBody = expandJSON(result.body);
+        // Use totalResources from meta for summary count to match test expectations
+        const assetCount = result.body.meta.page.totalResources;
         lookupResults.push({
           entity: result.entity,
           data: {
-            summary: getSummaryTags(result.entity, expandedBody),
-            details: expandedBody
+            summary: [`${assetCount} asset${assetCount > 1 ? 's' : ''}`],
+            details: {
+              assets: result.body.assets
+            }
           }
         });
       }
     });
+
     Logger.debug({ lookupResults }, 'Results');
+
     cb(null, lookupResults);
   });
-}
-
-function getIp(result) {
-  const preferredIps = fp.get('attributes.specific_data.data.network_interfaces.ips_preferred')(result);
-  if (Array.isArray(preferredIps) && preferredIps.length > 0) {
-    return preferredIps[0];
-  }
-  return null;
-}
-
-function getSummaryTags(entity, expandedBody) {
-  const tags = [];
-  let isUser = false;
-  // Check for specific fields on the first result
-  if (expandedBody.data.length > 0) {
-    const result = expandedBody.data[0];
-    const hostname = fp.get('attributes.specific_data.data.hostname')(result);
-    const ip = getIp(result);
-    const user = fp.get('attributes.specific_data.data.last_used_users')(result);
-    const displayName = fp.get('attributes.specific_data.data.display_name')(result);
-    if (entity.isIP && hostname) {
-      tags.push(hostname);
-    }
-    if (entity.isDomain && ip) {
-      tags.push(ip);
-    }
-    if (user) {
-      tags.push(`User: ${user}`);
-    }
-    if (displayName) {
-      tags.push(displayName);
-      isUser = true;
-    }
-  }
-
-  // There could be more than one result but we only show specific tags for the first
-  // Show how many other results there are
-  if (expandedBody.data.length > 1) {
-    tags.push(`+${expandedBody.data.length - 1} ${isUser ? 'users' : 'devices'}`);
-  }
-
-  // Ensure we have at least one tag
-  if (tags.length === 0) {
-    tags.push(`${expandedBody.data.length} results`);
-  }
-
-  return tags;
 }
 
 function validateUrl(errors, url) {

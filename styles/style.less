@@ -2,6 +2,42 @@
   font-size: 8px;
 }
 
+div.fields-table {
+  font-size: 12px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: 500px;
+  margin-bottom: 10px;
+  line-height: 1em;
+
+  table {
+    thead {
+      display: none;
+    }
+
+    tbody {
+      td {
+        border-bottom: 1px solid rgb(217, 217, 217);
+      }
+
+      tr:nth-child(odd) {
+        background-color: #fff;
+      }
+
+      tr:last-child {
+        td {
+          border-bottom: none;
+        }
+      }
+
+      td:first-child {
+        min-width: 35%;
+        width: 35%;
+      }
+    }
+  }
+}
+
 .source-tag {
   background-color: #cbd0d0;
   padding: 3px 5px;
