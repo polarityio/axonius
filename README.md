@@ -2,7 +2,7 @@
 
 The Polarity Axonius integration allows Polarity to search the Axonius API to return event information on internal users and assets.  The integration supports device lookups by preferred IP address, domain and a custom hostname type. In addition, user lookups are supported via e-mail address.
 
-Note that hostname lookups search both the assetname, hostname, and preferred hostname fields.
+Note that hostname lookups search both the asset name, hostname, and preferred hostname fields.
 
 The integration includes a custom hostname entity type that will match on strings that are between 5 and 25 characters and contain only valid hostname characters (i.e., lowercase and uppercase "a-z", digits "0-9", and a dash "-").
 
@@ -28,9 +28,51 @@ Valid Axonius API secret associated with the provided key.  Also available via h
 ### Search Result Limit
 Maximum number of Axonius search results to return in the Polarity overlay window.
 
-### Only return exact matches for hostnames
+### Asset Search by IP Query
+The query to run when searching assets/devices by IP address. The string `{{ENTITY}}` will be replaced by the looked up IP address.
 
-If checked, the integration will only return exact matches on hostnames.
+The default query is:
+
+```
+specific_data.data.network_interfaces.ips_preferred == "{{ENTITY}}"
+```
+
+### Asset Search by Host Query
+The query to run when searching assets/devices by hostname. The string `{{ENTITY}}` will be replaced by the looked up email address.
+
+The default query runs a case-insensitive exact match on name, hostname, and preferred_hostname fields: 
+```
+(specific_data.data.name == regex("^{{ENTITY}}$", "i")) or (specific_data.data.hostname == regex("^{{ENTITY}}$", "i")) or (specific_data.data.preferred_hostname == regex("^{{ENTITY}}$", "i"))
+```
+
+Using the regex constructor is expensive and cause queries to take a long time  (> 60 seconds) in environments with a large number of assets. The `regex` method is used to make the searches case-insensitive.  If your hostnames use a consistent naming convention (e.g., always lowercase or always uppercase) make use of the `to_upper` or `to_lower` methods instead of the `regex` method. 
+
+For example, if your hostnames are written in all uppercase you can use the following query:
+
+```
+(specific_data.data.name == to_upper("{{ENTITY}}")) or (specific_data.data.hostname == to_upper("{{ENTITY}}")) or (specific_data.data.preferred_hostname == to_upper("{{ENTITY}}"))
+```
+
+If possible, it is best to do exact match queries on only the fields you need to search.  As an example, to do an exact match query on just the `name` you can use the following:
+
+```
+specific_data.data.name == "{{ENTITY}}"
+```
+
+To run a non-exact match search you can use the following query:
+
+```
+(specific_data.data.name == regex("{{ENTITY}}", "i")) or (specific_data.data.hostname == regex("{{ENTITY}}", "i")) or (specific_data.data.preferred_hostname == regex("{{ENTITY}}", "i"))
+```
+
+### User Search by Email Query
+The query to run when searching users by email address. The string `{{ENTITY}}` will be replaced by the looked up email address.
+
+The default query is:
+
+```
+specific_data.data.username == "{{ENTITY}}"
+```
 
 ## Installation Instructions
 

@@ -3,196 +3,262 @@
     {{object-to-table details.assets}}
   </div>
 {{else}}
-  {{#each details.assets as |asset index|}}
-  {{!-- NonEmail Types --}}
-    {{#if (not-eq block.entity.type "email")}}
-      {{#if (gt index 0)}}
-        <hr>
-      {{/if}}
-      <span class="p-title">{{fa-icon icon="phone-laptop" fixedWidth=true}} Device #{{inc index}} Details:</span>
-      {{#if asset.internal_axon_id}}
-        <div>
-          <span class="p-key">Axonius ID:</span>
-          <a href="{{block.userOptions.url}}/devices/{{asset.internal_axon_id}}" class="p-link"> {{asset.internal_axon_id}} {{fa-icon "external-link-square" class="external-link-icon"}}</a>
-        </div>
-      {{/if}}
-    {{/if}}
-
-    {{!-- Email Type --}}
-    {{#if (eq block.entity.type "email")}}
-      {{#if (gt index 0)}}
-        <hr>
-      {{/if}}
-      <span class="p-title">{{fa-icon icon="user" fixedWidth=true}} User #{{inc index}} Details:</span>
-      {{#if asset.internal_axon_id}}
-        <div>
-          <span class="p-key">Axonius ID:</span>
-          <a href="{{block.userOptions.url}}/users/{{asset.internal_axon_id}}" class="p-link"> {{asset.internal_axon_id}} {{fa-icon "external-link-square" class="external-link-icon"}}</a>
-        </div>
-      {{/if}}
-    {{/if}}
-
-    {{!-- All Types --}}
-    {{#if asset.specific_data.data.hostname}}
-      <div>
-        <span class="p-key">Host Name:</span>
-        {{#each asset.specific_data.data.hostname as |hostname|}}
-          <span class="p-value">{{hostname}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if asset.specific_data.data.name}}
-      <div>
-        <span class="p-key">Asset Name:</span>
-        {{#each asset.specific_data.data.name as |asset|}}
-          <span class="p-value">{{asset}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if asset.specific_data.data.display_name}}
-      <div>
-        <span class="p-key">Display Name:</span>
-        <span class="p-value">{{asset.specific_data.data.display_name}}</span>
-      </div>
-    {{/if}}
-    {{#if asset.specific_data.data.employee_id}}
-      <div>
-        <span class="p-key">Employee ID:</span>
-        <span class="p-value">{{asset.specific_data.data.employee_id}}</span>
-      </div>
-    {{/if}}
-    {{#if (not (is-empty asset.specific_data.data.is_local))}}
-      <div>
-        <span class="p-key">Is Local:</span>
-        <span class="p-value">{{asset.specific_data.data.is_local}}</span>
-      </div>
-    {{/if}}
-    {{#if (not (is-empty asset.specific_data.data.is_locked))}}
-      <div>
-        <span class="p-key">Is Locked:</span>
-        <span class="p-value">{{asset.specific_data.data.is_locked}}</span>
-      </div>
-    {{/if}}
-    {{#if asset.specific_data.data.os.type_distribution_preferred}}
-      <div>
-        <span class="p-key">Preferred OS Type/Distro:</span>
-        <span class="p-value">{{asset.specific_data.data.os.type_distribution_preferred}}</span>
-      </div>
-    {{/if}}
-    {{#if asset.specific_data.data.network_interfaces.ips_preferred}}
-      <div>
-        <span class="p-key">Preferred IP(s):</span>
-        {{#each asset.specific_data.data.network_interfaces.ips_preferred as |ip|}}
-          <span class="p-value">{{ip}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if asset.specific_data.data.network_interfaces.mac_preferred}}
-      <div>
-        <span class="p-key">Preferred MAC(s):</span>
-        {{#each asset.specific_data.data.network_interfaces.mac_preferred as |mac|}}
-          <span class="p-value">{{mac}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if asset.specific_data.data.last_used_users}}
-      <div>
-        <span class="p-key">Last Used User(s):</span>
-        {{#each asset.specific_data.data.last_used_users as |user|}}
-          <span class="p-value">{{user}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if asset.specific_data.data.last_used_users_mail_association}}
-      <div>
-        <span class="p-key">Last Used User(s) Email:</span>
-        {{#each asset.specific_data.data.last_used_users_mail_association as |email|}}
-          <span class="p-value">{{email}}</span>
-        {{/each}}
-      </div>
-    {{/if}}
-    {{#if asset.specific_data.data.first_fetch_time}}
-      <div>
-        <span class="p-key">First Fetch Time:</span>
-        <span class="p-value">{{asset.specific_data.data.first_fetch_time}}</span>
-      </div>
-    {{/if}}
-    {{#if asset.specific_data.data.last_seen}}
-      <div>
-        <span class="p-key">Last Seen:</span>
-        <span class="p-value">{{asset.specific_data.data.last_seen}}</span>
-      </div>
-    {{/if}}
-    {{#if asset.labels}}
-      <h1 class="p-title">{{fa-icon "tags" fixedWidth=true}}Tags: </h1>
-      {{#each asset.labels as |label|}}
-        <span class="source-tag">{{label}}</span>
-      {{/each}}
-    {{/if}}
-    {{#if asset.specific_data.data.installed_software}}
-      <h1 class="p-title">{{fa-icon "save" fixedWidth=true}}Installed Software: </h1>
-      {{#each asset.specific_data.data.installed_software as |software|}}
-        <table class="p-table" style="margin-top:5px;">
-          <tbody>
-          <tr><td>{{software.name_version}}</td></tr>
-          </tbody>
-        </table>
-      {{/each}}
-    {{/if}}
-    {{#if asset.specific_data.data.security_patches}}
-      <h1 class="p-title">{{fa-icon "shield-alt" fixedWidth=true}}Security Patches: </h1>
-      {{#each asset.specific_data.data.security_patches as |patch|}}
-        <table class="p-table" style="margin-top:5px;">
-          <tbody>
-          <tr><td>{{patch.security_patch_id}}</td></tr>
-          </tbody>
-        </table>
-      {{/each}}
-    {{/if}}
-    {{#if asset.specific_data.data.open_ports}}
-      <h1 class="p-title">{{fa-icon "door-open" fixedWidth=true}}Open Ports: </h1>
-      {{#each asset.specific_data.data.open_ports as |port|}}
-        <div class="service-pill">
-          <span class="port">{{port.port_id}}</span><span class="service">{{port.protocol}}</span>
-        </div>
-      {{/each}}
-    {{/if}}
-    {{#if asset.adapters}}
-      <h1 class="p-title">{{fa-icon "plus-square" fixedWidth=true}}Adapters: </h1>
-      {{#each asset.adapters as |adapter|}}
-        <span class="source-tag">{{adapter}}</span>
-      {{/each}}
-    {{/if}}
-    {{#if asset.specific_data.data.associated_devices}}
-      <h1 class="p-title">{{fa-icon icon="laptop" fixedWidth=true}} Associated Devices</h1>
-      {{#each asset.specific_data.data.associated_devices as | device |}}
-        <div class="mb-2">
+  {{#each details.assets as |asset assetIndex|}}
+    <div class="asset-container">
+      {{!-- NonEmail Types --}}
+      {{#if (not-eq block.entity.type "email")}}
+        <span class="p-title mt-0">Asset #{{inc assetIndex}} Details</span>
+        {{#if asset.internal_axon_id}}
           <div>
-            <span class="p-key">Device Name:</span>
-            <span class="p-value">{{device.device_caption}}</span>
+            <span class="p-key">Axonius ID:</span>
+            <a href="{{block.userOptions.url}}/devices/{{asset.internal_axon_id}}" class="p-link"> {{asset.internal_axon_id}} {{fa-icon "external-link-square" class="external-link-icon"}}</a>
           </div>
-          {{#if device.device_serial}}
-            <div>
-              <span class="p-key">Device Serial #:</span>
-              <span class="p-value">{{device.device_serial}}</span>
-            </div>
-          {{/if}}
-          {{#if device.device_labels}}
-            <div>
-              <span class="p-key">Device Tags:</span>
-              <span class="p-value">{{device.device_labels}}</span>
-            </div>
-          {{/if}}
+        {{/if}}
+      {{/if}}
+  
+      {{!-- Email Type --}}
+      {{#if (eq block.entity.type "email")}}
+        <span class="p-title mt-0">{{fa-icon icon="user" fixedWidth=true}} User #{{inc assetIndex}} Details:</span>
+        {{#if asset.internal_axon_id}}
           <div>
-            <span class="p-key">Device Unique Id:</span>
-            <span class="p-value">
-            <a class="p-link" href="{{block.userOptions.url}}/devices/{{device.device_id}}">
-              {{device.device_id}} {{fa-icon "external-link-square" class="external-link-icon"}}
-            </a>
-          </span>
+            <span class="p-key">Axonius ID:</span>
+            <a href="{{block.userOptions.url}}/users/{{asset.internal_axon_id}}" class="p-link"> {{asset.internal_axon_id}} {{fa-icon "external-link-square" class="external-link-icon"}}</a>
           </div>
+        {{/if}}
+      {{/if}}
+  
+      {{!-- All Types --}}
+      {{#if asset.specific_data-data-hostname}}
+        <div>
+          <span class="p-key">Host Name:</span>
+          <span class="p-value">{{join  ", " asset.specific_data-data-hostname}}</span>
         </div>
-      {{/each}}
-    {{/if}}
+      {{/if}}
+      {{#if asset.specific_data.data.name}}
+        <div>
+          <span class="p-key">Asset Name:</span>
+          {{#each asset.specific_data-data-name as |asset|}}
+            <span class="p-value">{{asset}}</span>
+          {{/each}}
+        </div>
+      {{/if}}
+      {{#if asset.specific_data-data-display_name}}
+        <div>
+          <span class="p-key">Display Name:</span>
+          <span class="p-value">{{join ", " asset.specific_data-data-display_name}}</span>
+        </div>
+      {{/if}}      
+      {{#if asset.specific_data-data-employee_id}}
+        <div>
+          <span class="p-key">Employee ID:</span>
+          <span class="p-value">{{asset.specific_data-data-employee_id}}</span>
+        </div>
+      {{/if}}
+      {{#if (not (is-empty asset.specific_data-data-is_local))}}
+        <div>
+          <span class="p-key">Is Local:</span>
+          <span class="p-value">{{asset.specific_data-data-is_local}}</span>
+        </div>
+      {{/if}}
+      {{#if (not (is-empty asset.specific_data-data-is_locked))}}
+        <div>
+          <span class="p-key">Is Locked:</span>
+          <span class="p-value">{{asset.specific_data-data-is_locked}}</span>
+        </div>
+      {{/if}}
+      {{!-- String --}}
+      {{#if asset.specific_data-data-os-type_distribution_preferred}}
+        <div>
+          <span class="p-key">Preferred OS Type/Distro:</span>
+          <span class="p-value">{{asset.specific_data-data-os-type_distribution_preferred}}</span>
+        </div>
+      {{/if}}
+      {{#if asset.specific_data-data-network_interfaces-ips_preferred}}
+        <div>
+          <span class="p-key">Preferred IP(s):</span>
+          <span class="p-value">{{join ", " asset.specific_data-data-network_interfaces-ips_preferred}}</span>
+        </div>
+      {{/if}}
+      {{#if asset.specific_data-data-network_interfaces-mac_preferred}}
+        <div>
+          <span class="p-key">Preferred MAC(s):</span>
+          <span class="p-value">{{join ", " asset.specific_data-data-network_interfaces-mac_preferred}}</span>
+        </div>
+      {{/if}}
+      {{#if asset.specific_data-data-last_used_users}}
+        <div>
+          <span class="p-key">Last Used User(s):</span>
+          <span class="p-value">{{join ", " asset.specific_data-data-last_used_users}}</span>
+        </div>
+      {{/if}}
+      {{#if asset.specific_data-data-last_used_users_mail_association}}
+        <div>
+          <span class="p-key">Last Used User(s) Email:</span>
+          <span class="p-value">{{join ", " asset.specific_data-data-last_used_users_mail_association}}</span>
+        </div>
+      {{/if}}
+      {{!-- String --}}
+      {{#if asset.specific_data-data-first_fetch_time}}
+        <div>
+          <span class="p-key">First Fetch Time:</span>
+          <span class="p-value">{{asset.specific_data-data-first_fetch_time}}</span>
+        </div>
+      {{/if}}
+      {{!-- String --}}
+      {{#if asset.specific_data-data-last_seen}}
+        <div>
+          <span class="p-key">Last Seen:</span>
+          <span class="p-value">{{asset.specific_data-data-last_seen}}</span>
+        </div>
+      {{/if}}
+      {{#if asset.labels}}
+        <h1 class="p-title">Labels</h1>
+        {{#each asset.labels as |label|}}
+          <span class="source-tag">{{label}}</span>
+        {{/each}}
+      {{/if}}
+      {{#if asset.specific_data-data-security_patches}}
+        <h1 class="p-title">Security Patches</h1>
+        {{#each asset.specific_data-data-security_patches as |patch|}}
+          <table class="p-table" style="margin-top:5px;">
+            <tbody>
+              <tr><td>{{patch.security_patch_id}}</td></tr>
+            </tbody>
+          </table>
+        {{/each}}
+      {{/if}}
+      {{#if asset.specific_data-data-open_ports}}
+        <h1 class="p-title">Open Ports</h1>
+        {{#each asset.specific_data-data-open_ports as |port|}}
+          <div class="service-pill">
+            <span class="port">{{port.port_id}}</span><span class="service">{{port.protocol}}</span>
+          </div>
+        {{/each}}
+      {{/if}}
+      {{#if asset.adapters}}
+        <h1 class="p-title">Adapters</h1>
+        {{#each asset.adapters as |adapter|}}
+          <span class="source-tag">{{adapter}}</span>
+        {{/each}}
+      {{/if}}
+      {{#if asset.adapter_asset_entities_info}}
+        <div>
+           <h1 class="p-title">Adapters Asset Info</h1>
+          {{#each asset.adapter_asset_entities_info as |info|}}
+            <span class="source-tag">{{info}}</span>
+          {{/each}}
+        </div>
+      {{/if}}
+      {{#if asset.specific_data-data-associated_devices}}
+        <h1 class="p-title">Associated Devices</h1>
+        {{#each asset.specific_data-data-associated_devices as | device |}}
+          <div class="mb-2">
+            <div>
+              <span class="p-key">Device Name:</span>
+              <span class="p-value">{{device.device_caption}}</span>
+            </div>
+            {{#if device.device_serial}}
+              <div>
+                <span class="p-key">Device Serial #:</span>
+                <span class="p-value">{{device.device_serial}}</span>
+              </div>
+            {{/if}}
+            {{#if device.device_labels}}
+              <div>
+                <span class="p-key">Device Tags:</span>
+                <span class="p-value">{{device.device_labels}}</span>
+              </div>
+            {{/if}}
+            <div>
+              <span class="p-key">Device Unique Id:</span>
+              <span class="p-value">
+              <a class="p-link" href="{{block.userOptions.url}}/devices/{{device.device_id}}">
+                {{device.device_id}} {{fa-icon "external-link-square" class="external-link-icon"}}
+              </a>
+            </span>
+            </div>
+          </div>
+        {{/each}}
+      {{/if}}
+      {{#if asset.specific_data-data-installed_software}}
+        <h1 class="p-title">Installed Software ({{asset.specific_data-data-installed_software.length}})</h1>
+        {{!-- Begining of Data Filter --}}
+        <div class="input-container">
+          <label class="small ifta-label">
+            Filter for Software Name or Version
+          </label>
+          <input
+            type="text"
+            class="{{concat "ifta-field" (if uiElement.error " error")}}"
+            placeholder="Filter software"
+            oninput={{action (pipe (action (mut asset.__filterValue) value="target.value")(action "filterValueChanged" assetIndex asset.__filterValue))}}
+            value={{asset.__filterValue}}
+          />
+          {{#if (gt filterValue.length 0)}}
+            <span {{action (mut filterValue "")}}>
+              {{fa-icon icon="times-circle" fixedWidth=true class="clear-input-icon"}}
+            </span>
+          {{/if}}
+        </div>
+        {{!-- End of Data Filter --}}
+        {{!-- Beginning of Paging Header --}}
+        {{#if (gt asset.__installedSoftwareFilteredData.length 0)}}
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="pl-0 page-info p-footnote">
+              {{#if (gt asset.__installedSoftwareFilteredData.length pageSize)}}
+                Viewing search results {{asset.__pagingStartItem}} - {{asset.__pagingEndItem}} of {{asset.__installedSoftwareFilteredData.length}}
+              {{else}}
+                Viewing {{asset.__installedSoftwareFilteredData.length}} search results
+              {{/if}}
+            </div>
+          </div>
+          <div class="d-flex align-items-center justify-content-between p-footnote mb-1">
+            <div>Software</div>
+            <div>Support Status</div>
+          </div>
+        {{else}}
+          <div class="p-footnote">
+            No results found
+          </div>
+        {{/if}}
+        {{!-- End of Paging Header --}}
+        {{#each asset.__installedSoftwarePagingData as |software|}}
+          <div class="software-item d-flex align-items-center justify-content-between">
+            <div>{{software.vendor}} {{software.name_version}}</div>
+            <div>{{software.end_of_support_status}}</div>
+          </div>
+        {{/each}}
+        {{!-- Result Paging component for software --}}
+        {{#if (gt asset.__installedSoftwareFilteredData.length pageSize)}}
+          <div class="paging-bar">
+            <div>
+              <span class="paging-bar-title">{{block.acronym}}</span>
+            </div>
+            <div class="d-flex align-items-center">
+              <button class="btn paging-btn" {{action "firstPage" assetIndex}} disabled={{asset.__isPrevButtonsDisabled}}>
+                {{fa-icon icon="angle-double-left" fixedWidth=false}}
+              </button>
+              <button class="btn paging-btn" {{action "prevPage" assetIndex}} disabled={{asset.__isPrevButtonsDisabled}}>
+                {{fa-icon icon="angle-left" fixedWidth=false}}
+              </button>
+              <div class="paging-info">
+                {{#if (eq pageSize 1)}}
+                  {{asset.__pagingStartItem}} of {{asset.__installedSoftwareFilteredData.length}}
+                {{else}}
+                  {{asset.__pagingStartItem}} - {{asset.__pagingEndItem}} of {{asset.__installedSoftwareFilteredData.length}}
+                {{/if}}
+              </div>
+              <button class="btn paging-btn" {{action "nextPage" assetIndex}} disabled={{asset.__isNextButtonDisabled}}>
+                {{fa-icon icon="angle-right" fixedWidth=false}}
+              </button>
+              <button class="btn paging-btn" {{action "lastPage" assetIndex}} disabled={{asset.__isNextButtonDisabled}}>
+                {{fa-icon icon="angle-double-right" fixedWidth=false}}
+              </button>
+            </div>
+          </div>
+        {{/if}}
+      {{!-- End of Paging Component --}}
+      {{/if}}
+    </div>
   {{/each}}  
 {{/if}}
