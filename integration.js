@@ -3,6 +3,10 @@
 const request = require('postman-request');
 const async = require('async');
 
+const entityTemplateReplacementRegex = /{{entity}}/gi;
+const testAssets = require('./test-assets');
+const USE_TEST_DATA = false;
+
 let Logger;
 let requestWithDefaults;
 
@@ -57,13 +61,23 @@ function startup(logger) {
   requestWithDefaults = request.defaults(defaults);
 }
 
+function escapeEntityValue(entityValue) {
+  return entityValue
+    .toLowerCase()
+    .replace(/(\r\n|\n|\r)/gm, '')
+    .replace(/"/g, '"');
+}
+
 function getIpQuery(entity, options) {
   const entityValue = entity.value.trim();
+  const query = options.ipQuery.replace(entityTemplateReplacementRegex, escapeEntityValue(entityValue));
 
   return {
     include_metadata: true,
+    use_cache_entry: true,
+    include_details: false,
     fields: DEVICE_FIELDS_TO_RETURN,
-    query: `("specific_data.data.network_interfaces.ips_preferred" == "${entityValue}")`,
+    query,
     page: {
       offset: 0,
       limit: options.searchLimit
@@ -73,17 +87,14 @@ function getIpQuery(entity, options) {
 
 function getHostnameQuery(entity, options) {
   const entityValue = entity.value.trim();
+  const query = options.hostQuery.replace(entityTemplateReplacementRegex, escapeEntityValue(entityValue));
 
   return {
     include_metadata: true,
+    use_cache_entry: true,
+    include_details: false,
     fields: DEVICE_FIELDS_TO_RETURN,
-    query: options.exactMatchHostname
-      ? `(specific_data.data.name == regex("^${entityValue}$", "i")) or ` +
-        `(specific_data.data.hostname == regex("^${entityValue}$", "i")) or ` +
-        `(specific_data.data.preferred_hostname == regex("^${entityValue}$", "i"))`
-      : `(specific_data.data.name == regex("${entityValue}", "i")) or ` +
-        `(specific_data.data.hostname == regex("${entityValue}", "i")) or ` +
-        `(specific_data.data.preferred_hostname == regex("${entityValue}", "i"))`,
+    query,
     page: {
       offset: 0,
       limit: options.searchLimit
@@ -93,16 +104,67 @@ function getHostnameQuery(entity, options) {
 
 function getUserQuery(entity, options) {
   const entityValue = entity.value.trim();
+  const query = options.userQuery.replace(entityTemplateReplacementRegex, escapeEntityValue(entityValue));
 
   return {
     include_metadata: true,
     fields: USER_DEVICE_FIELDS_TO_RETURN,
-    query: `(specific_data.data.username == "${entityValue}")`,
+    query,
     page: {
       offset: 0,
       limit: options.searchLimit
     }
   };
+}
+
+/**
+ * Ember templates do not support displaying keys with dots in them so we have to convert
+ * all dots in keys to dashes.
+ * For example, the key `specific_data.data.hostname` becomes `specific_data-data-hostname`
+ *
+ * @param object
+ * @returns {{}|*}
+ */
+function dotsToDashes(object) {
+  if (Array.isArray(object)) {
+    return object.map(dotsToDashes);
+  } else if (object !== null && typeof object === 'object') {
+    return Object.entries(object).reduce((acc, [key, value]) => {
+      const newKey = key.replace(/\./g, '-');
+      acc[newKey] = dotsToDashes(value);
+      return acc;
+    }, {});
+  }
+  return object;
+}
+
+/**
+ * Recursively iterates over an object and removes any keys where the value is null.
+ * Also removes null values from within arrays. If the array becomes empty due to
+ * only containing null values, the array is removed. If an object becomes empty
+ * due to all values being removed (or if the object was empty to begin with), the
+ * object should be removed.
+ *
+ * @param object
+ * @returns {*} The cleaned object with null values removed.
+ */
+function removeNullAndEmptyValues(object) {
+  if (Array.isArray(object)) {
+    const filteredArray = object
+      .map(removeNullAndEmptyValues)
+      .filter((item) => item !== null && item !== undefined && item !== '');
+    return filteredArray.length > 0 ? filteredArray : null;
+  } else if (object !== null && typeof object === 'object') {
+    const cleanedObject = Object.entries(object).reduce((acc, [key, value]) => {
+      const cleanedValue = removeNullAndEmptyValues(value);
+      if (cleanedValue !== null && cleanedValue !== undefined && cleanedValue !== '') {
+        acc[key] = cleanedValue;
+      }
+      return acc;
+    }, {});
+    return Object.keys(cleanedObject).length > 0 ? cleanedObject : null;
+  }
+  return object !== '' ? object : null;
 }
 
 function doLookup(entities, options, cb) {
@@ -111,6 +173,21 @@ function doLookup(entities, options, cb) {
   options.url = options.url.endsWith('/') ? options.url : `${options.url}/`;
 
   Logger.debug({ entities }, 'doLookup entities');
+
+  if (USE_TEST_DATA) {
+    const transformedAsset = dotsToDashes(
+      removeNullAndEmptyValues({
+        entity: entities[0],
+        data: {
+          summary: [`${testAssets.assets.length} asset${testAssets.assets.length > 1 ? 's' : ''}`],
+          details: testAssets
+        }
+      })
+    );
+
+    Logger.info({ transformedAsset }, 'Modified Asset');
+    return cb(null, [transformedAsset]);
+  }
 
   entities.forEach((entity) => {
     let requestOptions = {
@@ -213,14 +290,12 @@ function doLookup(entities, options, cb) {
           data: null
         });
       } else {
-        // Use totalResources from meta for summary count to match test expectations
-        const assetCount = result.body.meta.page.totalResources;
         lookupResults.push({
           entity: result.entity,
           data: {
-            summary: [`${assetCount} asset${assetCount > 1 ? 's' : ''}`],
+            summary: [`${result.body.assets.length} asset${result.body.assets.length > 1 ? 's' : ''}`],
             details: {
-              assets: result.body.assets
+              assets: dotsToDashes(removeNullAndEmptyValues(result.body.assets))
             }
           }
         });

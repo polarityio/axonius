@@ -17,7 +17,11 @@
       "regex": "^(?<!\\n|\\r\\n)[ \\t]*[a-zA-Z0-9\\-]{5,25}[ \\t]*(?!\\n|\\r\\n)$"
     }
   ],
-  "entityTypes": ["IPv4", "domain", "email"],
+  "entityTypes": [
+    "IPv4",
+    "domain",
+    "email"
+  ],
   "customTypes": [
     {
       "key": "hostname",
@@ -25,7 +29,9 @@
     }
   ],
   "onDemandOnly": true,
-  "styles": ["./styles/style.less"],
+  "styles": [
+    "./styles/style.less"
+  ],
   "defaultColor": "light-blue",
   "block": {
     "component": {
@@ -76,11 +82,29 @@
       "adminOnly": true
     },
     {
-      "key": "exactMatchHostname",
-      "name": "Only return exact matches for hostnames",
-      "description": "If checked, the integration will only return exact matches on hostnames.",
-      "default": false,
-      "type": "boolean",
+      "key": "ipQuery",
+      "name": "Asset Search by IP Query",
+      "description": "The query to run when searching assets/devices by IP address. The string `{{ENTITY}}` will be replaced by the looked up IP address.",
+      "type": "text",
+      "default": "specific_data.data.network_interfaces.ips_preferred == \"{{ENTITY}}\"",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "hostQuery",
+      "name": "Asset Search by Host Query",
+      "description": "The query to run when searching assets/devices by hostname. The string `{{ENTITY}}` will be replaced by the looked up email address.",
+      "type": "text",
+      "default": "(specific_data.data.name == regex(\"^{{ENTITY}}$\", \"i\")) or (specific_data.data.hostname == regex(\"^{{ENTITY}}$\", \"i\")) or (specific_data.data.preferred_hostname == regex(\"^{{ENTITY}}$\", \"i\"))",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "userQuery",
+      "name": "User Search by Email Query",
+      "description": "The query to run when searching users by email address. The string `{{ENTITY}}` will be replaced by the looked up email address.",
+      "type": "text",
+      "default": "specific_data.data.username == \"{{ENTITY}}\"",
       "userCanEdit": false,
       "adminOnly": true
     },
@@ -90,7 +114,7 @@
       "description": "If checked, the integration will display all data as a table.  This setting is for troubleshooting.",
       "default": false,
       "type": "boolean",
-      "userCanEdit": true,
+      "userCanEdit": false,
       "adminOnly": false
     }
   ]
