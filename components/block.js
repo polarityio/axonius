@@ -8,11 +8,11 @@ polarity.export = PolarityComponent.extend({
       const installedSoftware = this.get(`assets.${assetIndex}.specific_data-data-installed_software`);
       if (Array.isArray(installedSoftware)) {
         this.set(
-          `assets.${assetIndex}.__installedSoftwareFilteredPagingData`,
+          `assets.${assetIndex}.__installedSoftwareFilteredData`,
           this.get(`assets.${assetIndex}.specific_data-data-installed_software`)
         );
       } else {
-        this.set(`assets.${assetIndex}.__installedSoftwareFilteredPagingData`, []);
+        this.set(`assets.${assetIndex}.__installedSoftwareFilteredData`, []);
       }
 
       this.setCurrentPage(assetIndex, 1);
@@ -29,7 +29,7 @@ polarity.export = PolarityComponent.extend({
       }
     },
     nextPage(assetIndex) {
-      const totalResults = this.get(`assets.${assetIndex}.__installedSoftwareFilteredPagingData.length`);
+      const totalResults = this.get(`assets.${assetIndex}.__installedSoftwareFilteredData.length`);
       const totalPages = Math.ceil(totalResults / this.get('pageSize'));
       let currentPage = this.get(`assets.${assetIndex}.__currentPage`);
       if (currentPage < totalPages) {
@@ -40,7 +40,7 @@ polarity.export = PolarityComponent.extend({
       this.setCurrentPage(assetIndex, 1);
     },
     lastPage(assetIndex) {
-      const totalResults = this.get(`assets.${assetIndex}.__installedSoftwareFilteredPagingData.length`);
+      const totalResults = this.get(`assets.${assetIndex}.__installedSoftwareFilteredData.length`);
       const totalPages = Math.ceil(totalResults / this.get('pageSize'));
       this.setCurrentPage(assetIndex, totalPages);
     },
@@ -50,7 +50,7 @@ polarity.export = PolarityComponent.extend({
         filterValue = filterValue.toLowerCase().trim();
         if (filterValue.length > 0) {
           this.set(
-            `assets.${assetIndex}.__installedSoftwareFilteredPagingData`,
+            `assets.${assetIndex}.__installedSoftwareFilteredData`,
             this.get(`assets.${assetIndex}.specific_data-data-installed_software`).filter((software) => {
               if (!software.name_version && !software.vendor) {
                 return true;
@@ -65,7 +65,7 @@ polarity.export = PolarityComponent.extend({
         }
       } else {
         this.set(
-          `assets.${assetIndex}.__installedSoftwareFilteredPagingData`,
+          `assets.${assetIndex}.__installedSoftwareFilteredData`,
           this.get(`assets.${assetIndex}.specific_data-data-installed_software`)
         );
       }
@@ -99,17 +99,17 @@ polarity.export = PolarityComponent.extend({
     this.set(`assets.${assetIndex}.__isPrevButtonsDisabled`, currentPage === 1);
   },
   /**
-   * Should update after currentPage changes or __installedSoftwareFilteredPagingData.length changes
+   * Should update after currentPage changes or __installedSoftwareFilteredData.length changes
    * @param assetIndex
    */
   setIsNextButtonDisabled(assetIndex) {
     const currentPage = this.get(`assets.${assetIndex}.__currentPage`);
-    const totalResults = this.get(`assets.${assetIndex}.__installedSoftwareFilteredPagingData.length`);
+    const totalResults = this.get(`assets.${assetIndex}.__installedSoftwareFilteredData.length`);
     const totalPages = Math.ceil(totalResults / this.get('pageSize'));
-    this.set(`assets.${assetIndex}.__isNextButtonsDisabled`, currentPage === totalPages);
+    this.set(`assets.${assetIndex}.__isNextButtonDisabled`, currentPage === totalPages);
   },
   setPagingData(assetIndex) {
-    if (!this.get(`assets.${assetIndex}.__installedSoftwareFilteredPagingData`)) {
+    if (!this.get(`assets.${assetIndex}.__installedSoftwareFilteredData`)) {
       this.set(`assets.${assetIndex}.__installedSoftwarePagingData`, []);
     }
 
@@ -119,7 +119,7 @@ polarity.export = PolarityComponent.extend({
 
     this.set(
       `assets.${assetIndex}.__installedSoftwarePagingData`,
-      this.get(`assets.${assetIndex}.__installedSoftwareFilteredPagingData`).slice(startIndex, endIndex)
+      this.get(`assets.${assetIndex}.__installedSoftwareFilteredData`).slice(startIndex, endIndex)
     );
   },
   setCurrentPage(assetIndex, currentPageValue) {

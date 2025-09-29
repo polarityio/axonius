@@ -202,13 +202,13 @@
         </div>
         {{!-- End of Data Filter --}}
         {{!-- Beginning of Paging Header --}}
-        {{#if (gt asset.__installedSoftwareFilteredPagingData.length 0)}}
+        {{#if (gt asset.__installedSoftwareFilteredData.length 0)}}
           <div class="d-flex align-items-center justify-content-between mb-2">
             <div class="pl-0 page-info p-footnote">
-              {{#if (gt asset.__installedSoftwareFilteredPagingData.length pageSize)}}
-                Viewing search results {{asset.__pagingStartItem}} - {{asset.__pagingEndItem}} of {{asset.__installedSoftwareFilteredPagingData.length}}
+              {{#if (gt asset.__installedSoftwareFilteredData.length pageSize)}}
+                Viewing search results {{asset.__pagingStartItem}} - {{asset.__pagingEndItem}} of {{asset.__installedSoftwareFilteredData.length}}
               {{else}}
-                Viewing {{asset.__installedSoftwareFilteredPagingData.length}} search results
+                Viewing {{asset.__installedSoftwareFilteredData.length}} search results
               {{/if}}
             </div>
           </div>
@@ -229,7 +229,7 @@
           </div>
         {{/each}}
         {{!-- Result Paging component for software --}}
-        {{#if (gt asset.__installedSoftwareFilteredPagingData.length pageSize)}}
+        {{#if (gt asset.__installedSoftwareFilteredData.length pageSize)}}
           <div class="paging-bar">
             <div>
               <span class="paging-bar-title">{{block.acronym}}</span>
@@ -243,9 +243,9 @@
               </button>
               <div class="paging-info">
                 {{#if (eq pageSize 1)}}
-                  {{asset.__pagingStartItem}} of {{asset.__installedSoftwareFilteredPagingData.length}}
+                  {{asset.__pagingStartItem}} of {{asset.__installedSoftwareFilteredData.length}}
                 {{else}}
-                  {{asset.__pagingStartItem}} - {{asset.__pagingEndItem}} of {{asset.__installedSoftwareFilteredPagingData.length}}
+                  {{asset.__pagingStartItem}} - {{asset.__pagingEndItem}} of {{asset.__installedSoftwareFilteredData.length}}
                 {{/if}}
               </div>
               <button class="btn paging-btn" {{action "nextPage" assetIndex}} disabled={{asset.__isNextButtonDisabled}}>
