@@ -167,6 +167,41 @@ function removeNullAndEmptyValues(object) {
   return object !== '' ? object : null;
 }
 
+function sortPorts(assets) {
+  if (Array.isArray(assets)) {
+    return assets.map((asset) => {
+      if (Array.isArray(asset['specific_data-data-open_ports'])) {
+        asset['specific_data-data-open_ports'] = asset['specific_data-data-open_ports'].sort(
+          (a, b) => a.port_id - b.port_id
+        );
+      }
+      return asset;
+    });
+  }
+
+  return assets;
+}
+
+function sortPatches(assets) {
+  Logger.info({ assets }, 'Assets to sort');
+  if (Array.isArray(assets)) {
+    return assets.map((asset) => {
+      if (Array.isArray(asset['specific_data-data-security_patches'])) {
+        asset['specific_data-data-security_patches'] = asset['specific_data-data-security_patches'].sort(
+          (a, b) => new Date(b.installed_on) - new Date(a.installed_on)
+        );
+      }
+      return asset;
+    });
+  }
+
+  return assets;
+}
+
+function formatAssets(assets) {
+  return sortPatches(sortPorts(dotsToDashes(removeNullAndEmptyValues(assets))));
+}
+
 function doLookup(entities, options, cb) {
   let lookupResults = [];
   let tasks = [];
@@ -175,17 +210,17 @@ function doLookup(entities, options, cb) {
   Logger.debug({ entities }, 'doLookup entities');
 
   if (USE_TEST_DATA) {
-    const transformedAsset = dotsToDashes(
-      removeNullAndEmptyValues({
-        entity: entities[0],
-        data: {
-          summary: [`${testAssets.assets.length} asset${testAssets.assets.length > 1 ? 's' : ''}`],
-          details: testAssets
+    const transformedAsset = {
+      entity: entities[0],
+      data: {
+        summary: [`${testAssets.assets.length} asset${testAssets.assets.length > 1 ? 's' : ''}`],
+        details: {
+          assets: formatAssets(testAssets.assets)
         }
-      })
-    );
+      }
+    };
 
-    Logger.info({ transformedAsset }, 'Modified Asset');
+    Logger.info({ transformedAsset }, 'Modified Tests Assets');
     return cb(null, [transformedAsset]);
   }
 
@@ -205,7 +240,7 @@ function doLookup(entities, options, cb) {
       requestOptions.uri = `${options.url}api/v2/assets/devices`;
       requestOptions.body = getIpQuery(entity, options);
     } else if (entity.isEmail) {
-      requestOptions.uri = `${options.url}api/v2/users`;
+      requestOptions.uri = `${options.url}api/v2/assets/users`;
       requestOptions.body = getUserQuery(entity, options);
     } else {
       return;
@@ -251,7 +286,7 @@ function doLookup(entities, options, cb) {
             error = {
               err: 'Not Found',
               body,
-              detail: 'Requested item doesn\'t exist or not enough access permissions.'
+              detail: "Requested item doesn't exist or not enough access permissions."
             };
           } else if (res.statusCode === 429) {
             error = {
@@ -284,7 +319,7 @@ function doLookup(entities, options, cb) {
     }
 
     results.forEach((result) => {
-      if (!result.body || result.body.meta.page.totalResources === 0) {
+      if (!result.body || !Array.isArray(result.body.assets) || result.body.assets.length === 0) {
         lookupResults.push({
           entity: result.entity,
           data: null
@@ -295,7 +330,7 @@ function doLookup(entities, options, cb) {
           data: {
             summary: [`${result.body.assets.length} asset${result.body.assets.length > 1 ? 's' : ''}`],
             details: {
-              assets: dotsToDashes(removeNullAndEmptyValues(result.body.assets))
+              assets: formatAssets(result.body.assets)
             }
           }
         });
