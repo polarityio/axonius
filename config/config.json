@@ -93,7 +93,7 @@
     {
       "key": "hostQuery",
       "name": "Asset Search by Host Query",
-      "description": "The query to run when searching assets/devices by hostname. The string `{{ENTITY}}` will be replaced by the looked up email address.",
+      "description": "The query to run when searching assets/devices by hostname. The string `{{ENTITY}}` will be replaced by the looked up hostname.",
       "type": "text",
       "default": "(specific_data.data.name == regex(\"^{{ENTITY}}$\", \"i\")) or (specific_data.data.hostname == regex(\"^{{ENTITY}}$\", \"i\")) or (specific_data.data.preferred_hostname == regex(\"^{{ENTITY}}$\", \"i\"))",
       "userCanEdit": false,

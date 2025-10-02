@@ -45,13 +45,7 @@ The default query runs a case-insensitive exact match on name, hostname, and pre
 (specific_data.data.name == regex("^{{ENTITY}}$", "i")) or (specific_data.data.hostname == regex("^{{ENTITY}}$", "i")) or (specific_data.data.preferred_hostname == regex("^{{ENTITY}}$", "i"))
 ```
 
-Using the regex constructor is expensive and cause queries to take a long time  (> 60 seconds) in environments with a large number of assets. The `regex` method is used to make the searches case-insensitive.  If your hostnames use a consistent naming convention (e.g., always lowercase or always uppercase) make use of the `to_upper` or `to_lower` methods instead of the `regex` method. 
-
-For example, if your hostnames are written in all uppercase you can use the following query:
-
-```
-(specific_data.data.name == to_upper("{{ENTITY}}")) or (specific_data.data.hostname == to_upper("{{ENTITY}}")) or (specific_data.data.preferred_hostname == to_upper("{{ENTITY}}"))
-```
+Using the regex constructor is expensive and cause queries to take a long time  (> 60 seconds) in environments with a large number of assets. The `regex` method is used to make the searches case-insensitive.  If your hostnames use a consistent naming convention it can be more performant to have users always search in the proper case.  When searching certain fields that have an equivalent `details` field (e.g., `name_details`), searching the primary `name` field also appears to search iterations in the `name_details` field.  
 
 If possible, it is best to do exact match queries on only the fields you need to search.  As an example, to do an exact match query on just the `name` you can use the following:
 
