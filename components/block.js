@@ -1,6 +1,9 @@
 polarity.export = PolarityComponent.extend({
   details: Ember.computed.alias('block.data.details'),
   assets: Ember.computed.alias('details.assets'),
+  timezone: Ember.computed('Intl', function () {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }),
   // Session Paging Variables
   pageSize: 5,
   init: function () {
@@ -15,11 +18,79 @@ polarity.export = PolarityComponent.extend({
         this.set(`assets.${assetIndex}.__installedSoftwareFilteredData`, []);
       }
 
+      const ports = this.get(`assets.${assetIndex}.specific_data-data-open_ports`);
+      if (Array.isArray(ports)) {
+        this.set(
+          `assets.${assetIndex}.__portsFilteredData`,
+          this.get(`assets.${assetIndex}.specific_data-data-open_ports`)
+        );
+      } else {
+        this.set(`assets.${assetIndex}.__portsFilteredData`, []);
+      }
+
+      const patches = this.get(`assets.${assetIndex}.specific_data-data-security_patches`);
+      if (Array.isArray(patches)) {
+        this.set(
+          `assets.${assetIndex}.__patchesFilteredData`,
+          this.get(`assets.${assetIndex}.specific_data-data-security_patches`)
+        );
+      } else {
+        this.set(`assets.${assetIndex}.__patchesFilteredData`, []);
+      }
+
       this.setCurrentPage(assetIndex, 1);
     });
     this._super(...arguments);
   },
   actions: {
+    patchesFilterValueChanged(assetIndex, filterValue) {
+      if (filterValue) {
+        filterValue = filterValue.toLowerCase().trim();
+        if (filterValue.length > 0) {
+          this.set(
+            `assets.${assetIndex}.__patchesFilteredData`,
+            this.get(`assets.${assetIndex}.specific_data-data-security_patches`).filter((patch) => {
+              if (!patch.security_patch_id) {
+                return true;
+              }
+              // Support filtering on port, protocol, and service_name
+              return patch.security_patch_id ? patch.security_patch_id.toLowerCase().includes(filterValue) : false;
+            })
+          );
+        }
+      } else {
+        this.set(
+          `assets.${assetIndex}.__patchesFilteredData`,
+          this.get(`assets.${assetIndex}.specific_data-data-security_patches`)
+        );
+      }
+    },
+    portFilterValueChanged(assetIndex, filterValue) {
+      if (filterValue) {
+        filterValue = filterValue.toLowerCase().trim();
+        if (filterValue.length > 0) {
+          this.set(
+            `assets.${assetIndex}.__portsFilteredData`,
+            this.get(`assets.${assetIndex}.specific_data-data-open_ports`).filter((port) => {
+              if (!port.port_id && !port.protocol && !port.service_name) {
+                return true;
+              }
+              // Support filtering on port, protocol, and service_name
+              return (
+                (port.port_id ? port.port_id.toString().includes(filterValue) : false) ||
+                (port.service_name ? port.service_name.toLowerCase().includes(filterValue) : false) ||
+                (port.protocol ? port.protocol.toLowerCase().includes(filterValue) : false)
+              );
+            })
+          );
+        }
+      } else {
+        this.set(
+          `assets.${assetIndex}.__portsFilteredData`,
+          this.get(`assets.${assetIndex}.specific_data-data-open_ports`)
+        );
+      }
+    },
     // Start Paging Actions
     prevPage(assetIndex) {
       let currentPage = this.get(`assets.${assetIndex}.__currentPage`);

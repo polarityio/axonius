@@ -47,7 +47,7 @@
           <span class="p-key">Display Name:</span>
           <span class="p-value">{{join ", " asset.specific_data-data-display_name}}</span>
         </div>
-      {{/if}}      
+      {{/if}}
       {{#if asset.specific_data-data-employee_id}}
         <div>
           <span class="p-key">Employee ID:</span>
@@ -97,6 +97,12 @@
           <span class="p-value">{{join ", " asset.specific_data-data-last_used_users_mail_association}}</span>
         </div>
       {{/if}}
+      {{#if asset.specific_data-data-first_seen_preferred}}
+        <div>
+          <span class="p-key">First Seen:</span>
+          <span class="p-value">{{asset.specific_data-data-first_seen_preferred}}</span>
+        </div>
+      {{/if}}
       {{!-- String --}}
       {{#if asset.specific_data-data-first_fetch_time}}
         <div>
@@ -118,22 +124,105 @@
         {{/each}}
       {{/if}}
       {{#if asset.specific_data-data-security_patches}}
-        <h1 class="p-title">Security Patches</h1>
-        {{#each asset.specific_data-data-security_patches as |patch|}}
-          <table class="p-table" style="margin-top:5px;">
-            <tbody>
-              <tr><td>{{patch.security_patch_id}}</td></tr>
-            </tbody>
-          </table>
-        {{/each}}
+        <h1 class="p-title d-flex align-items-center justify-content-between">
+          <div>
+            Security Patches ({{asset.specific_data-data-security_patches.length}})
+          </div>
+          <div {{action (toggle "__viewPatchFilter" asset)}} class="p-action">
+            {{#if asset.__viewPatchFilter}}
+              Hide patch filter {{fa-icon icon="chevron-up" fixedWidth=true}}
+            {{else}}
+              View patch filter {{fa-icon icon="chevron-down" fixedWidth=true}}  
+            {{/if}}            
+          </div>
+        </h1>
+        {{#if asset.__viewPatchFilter}}
+          {{!-- Beginning Patches Data Filter --}}
+          <div class="input-container">
+            <label class="small ifta-label">
+              Filter by Patch ID
+            </label>
+            <input
+              type="text"
+              class="{{concat "mb-1 ifta-field" (if uiElement.error " error")}}"
+              placeholder="Filter patches"
+              oninput={{action (pipe (action (mut asset.__patchesFilterValue) value="target.value")(action "patchesFilterValueChanged" assetIndex asset.__patchesFilterValue))}}
+              value={{asset.__patchesFilterValue}}
+            />
+            {{#if (gt asset.__patchesFilterValue.length 0)}}
+              <span {{action (pipe (action (mut asset.__patchesFilterValue ""))(action "patchesFilterValueChanged" assetIndex asset.__patchesFilterValue))}}>
+                {{fa-icon icon="times-circle" fixedWidth=true class="clear-input-icon"}}
+              </span>
+            {{/if}}
+          </div>
+        {{/if}}
+        <div class="d-flex align-items-center justify-content-between p-footnote mb-1">
+          <div>Patch ID</div>
+          <div>Installed</div>
+        </div>
+        <div class="scrollable-container">
+          {{#each asset.__patchesFilteredData as |patch|}}
+            <div class="software-item d-flex align-items-center justify-content-between">
+              <div>{{patch.security_patch_id}}</div>
+              <div>
+                {{moment-format
+                  patch.installed_on
+                  "MM/DD/YYYY HH:mm:ss"
+                  timeZone=timezone
+                }}
+              </div>
+            </div>
+          {{/each}}
+        </div>
       {{/if}}
       {{#if asset.specific_data-data-open_ports}}
-        <h1 class="p-title">Open Ports</h1>
-        {{#each asset.specific_data-data-open_ports as |port|}}
-          <div class="service-pill">
-            <span class="port">{{port.port_id}}</span><span class="service">{{port.protocol}}</span>
+        <h1 class="p-title d-flex align-items-center justify-content-between">
+          <div>
+            Open Ports ({{asset.specific_data-data-open_ports.length}})
           </div>
-        {{/each}}
+          <div {{action (toggle "__viewPortFilter" asset)}} class="p-action">
+            {{#if asset.__viewPortFilter}}
+              Hide port filter {{fa-icon icon="chevron-up" fixedWidth=true}}
+            {{else}}
+              View port filter {{fa-icon icon="chevron-down" fixedWidth=true}}
+            {{/if}}
+          </div>
+        </h1>
+        {{#if asset.__viewPortFilter}}
+          {{!-- Beginning Ports Data Filter --}}
+          <div class="input-container">
+            <label class="small ifta-label">
+              Filter by Port, Protocol, or Service
+            </label>
+            <input
+              type="text"
+              class="{{concat "mb-1 ifta-field" (if uiElement.error " error")}}"
+              placeholder="Filter ports"
+              oninput={{action (pipe (action (mut asset.__portFilterValue) value="target.value")(action "portFilterValueChanged" assetIndex asset.__portFilterValue))}}
+              value={{asset.__portFilterValue}}
+            />
+            {{#if (gt asset.__portFilterValue.length 0)}}
+              <span {{action (pipe (action (mut asset.__portFilterValue ""))(action "portFilterValueChanged" assetIndex asset.__portFilterValue))}}>
+                {{fa-icon icon="times-circle" fixedWidth=true class="clear-input-icon"}}
+              </span>
+            {{/if}}
+          </div>
+        {{/if}}
+        <div class="d-flex align-items-center justify-content-between p-footnote mb-1">
+          <div>Port & Protocol</div>
+          <div>Service</div>
+        </div>
+        <div class="scrollable-container">
+          {{#each asset.__portsFilteredData as |port|}}
+            <div class="software-item d-flex align-items-center justify-content-between">
+              <div>
+                <span class="port-id">{{port.port_id}}</span>
+                {{port.protocol}}
+              </div>
+              <div>{{port.service_name}}</div>
+            </div>
+          {{/each}}
+        </div>
       {{/if}}
       {{#if asset.adapters}}
         <h1 class="p-title">Adapters</h1>
@@ -181,26 +270,39 @@
         {{/each}}
       {{/if}}
       {{#if asset.specific_data-data-installed_software}}
-        <h1 class="p-title">Installed Software ({{asset.specific_data-data-installed_software.length}})</h1>
-        {{!-- Begining of Data Filter --}}
-        <div class="input-container">
-          <label class="small ifta-label">
-            Filter for Software Name or Version
-          </label>
-          <input
-            type="text"
-            class="{{concat "ifta-field" (if uiElement.error " error")}}"
-            placeholder="Filter software"
-            oninput={{action (pipe (action (mut asset.__filterValue) value="target.value")(action "filterValueChanged" assetIndex asset.__filterValue))}}
-            value={{asset.__filterValue}}
-          />
-          {{#if (gt filterValue.length 0)}}
-            <span {{action (mut filterValue "")}}>
-              {{fa-icon icon="times-circle" fixedWidth=true class="clear-input-icon"}}
-            </span>
-          {{/if}}
-        </div>
-        {{!-- End of Data Filter --}}
+        <h1 class="p-title d-flex align-items-center justify-content-between">
+          <div>
+            Installed Software ({{asset.specific_data-data-installed_software.length}})
+          </div>
+          <div {{action (toggle "__viewSoftwareFilter" asset)}} class="p-action">
+            {{#if asset.__viewSoftwareFilter}}
+              Hide software filter {{fa-icon icon="chevron-up" fixedWidth=true}}
+            {{else}}
+              View software filter {{fa-icon icon="chevron-down" fixedWidth=true}}
+            {{/if}}
+          </div>
+        </h1>
+        {{#if asset.__viewSoftwareFilter}}
+          {{!-- Beginning of Data Filter --}}
+          <div class="input-container">
+            <label class="small ifta-label">
+              Filter for Software Name or Version
+            </label>
+            <input
+              type="text"
+              class="{{concat "mb-1 ifta-field" (if uiElement.error " error")}}"
+              placeholder="Filter software"
+              oninput={{action (pipe (action (mut asset.__filterValue) value="target.value")(action "filterValueChanged" assetIndex asset.__filterValue))}}
+              value={{asset.__filterValue}}
+            />
+            {{#if (gt asset.__filterValue.length 0)}}
+              <span {{action (pipe (action (mut asset.__filterValue ""))(action "filterValueChanged" assetIndex asset.__filterValue))}}>
+                {{fa-icon icon="times-circle" fixedWidth=true class="clear-input-icon"}}
+              </span>
+            {{/if}}
+          </div>
+          {{!-- End of Data Filter --}}
+        {{/if}}
         {{!-- Beginning of Paging Header --}}
         {{#if (gt asset.__installedSoftwareFilteredData.length 0)}}
           <div class="d-flex align-items-center justify-content-between mb-2">
@@ -232,7 +334,7 @@
         {{#if (gt asset.__installedSoftwareFilteredData.length pageSize)}}
           <div class="paging-bar">
             <div>
-              <span class="paging-bar-title">{{block.acronym}}</span>
+              <span class="p-footnote">Software</span>
             </div>
             <div class="d-flex align-items-center">
               <button class="btn paging-btn" {{action "firstPage" assetIndex}} disabled={{asset.__isPrevButtonsDisabled}}>
