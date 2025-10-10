@@ -29,6 +29,8 @@ const DEVICE_FIELDS_TO_RETURN = [
   'specific_data.data.agent_versions',
   'specific_data.data.installed_software',
   'specific_data.data.security_patches',
+  'specific_data.data.last_used_users_user_title_association',
+  'specific_data.data.last_used_users_departments_association',
   'labels'
 ];
 
@@ -43,7 +45,9 @@ const USER_DEVICE_FIELDS_TO_RETURN = [
   'specific_data.data.employee_id',
   'user_status',
   'groups',
-  'specific_data.data.associated_devices'
+  'specific_data.data.associated_devices',
+  'specific_data.data.user_department',
+  'specific_data.data.user_title'
 ];
 
 /**
