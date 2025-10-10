@@ -21,6 +21,8 @@ module.exports = {
       'specific_data.data.os.type_distribution_details': [null],
       'specific_data.data.os.type_distribution_preferred_details': [null],
       'specific_data.data.first_seen_preferred': 'Thu, 16 Dec 2021 15:08:29 GMT',
+      'specific_data.data.last_used_users_user_title_association': ['Manager', 'Director', 'Head of Threat Intel'],
+      'specific_data.data.last_used_users_departments_association': ['Security', 'SOC'],
       unique_adapter_names_details: [''],
       'specific_data.data.open_ports': [
         {
@@ -189,6 +191,8 @@ module.exports = {
       adapters_details: [''],
       internal_axon_id_details: [''],
       labels_details: [''],
+      'specific_data.data.last_used_users_user_title_association': ['Analyst', 'Senior Analyst', 'Threat Intel Analyst'],
+      'specific_data.data.last_used_users_departments_association': ['Security', 'Threat Intel'],
       'specific_data.data.security_patches': [
         {
           installed_on: 'Thu, 16 Dec 2021 15:08:29 GMT',

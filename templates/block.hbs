@@ -66,6 +66,30 @@
           <span class="p-value">{{asset.specific_data-data-is_locked}}</span>
         </div>
       {{/if}}
+      {{#if asset.specific_data-data-last_used_users_departments_association}}
+        <div>
+          <span class="p-key">User's Departments:</span>
+          <span class="p-value">{{join  ", " asset.specific_data-data-last_used_users_departments_association}}</span>
+        </div>
+      {{/if}}
+      {{#if asset.specific_data-data-last_used_users_user_title_association}}
+        <div>
+          <span class="p-key">User's Titles:</span>
+          <span class="p-value">{{join  ", " asset.specific_data-data-last_used_users_user_title_association}}</span>
+        </div>
+      {{/if}}
+      {{#if asset.specific_data-data-user_department}}
+        <div>
+          <span class="p-key">User Department:</span>
+          <span class="p-value">{{join  ", " asset.specific_data-data-user_department}}</span>
+        </div>
+      {{/if}}
+      {{#if asset.specific_data-data-user_title}}
+        <div>
+          <span class="p-key">User Title:</span>
+          <span class="p-value">{{join  ", " asset.specific_data-data-user_title}}</span>
+        </div>
+      {{/if}}
       {{!-- String --}}
       {{#if asset.specific_data-data-os-type_distribution_preferred}}
         <div>
