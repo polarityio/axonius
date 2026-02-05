@@ -1,0 +1,218 @@
+{
+  "assets": [
+    {
+      "internal_axon_id": "5f4dcc3b5aa765d61d8327deb882cf99",
+      "adapters": ["active_directory", "crowdstrike", "tanium"],
+      "adapter_list_length": 3,
+      "labels": ["Production", "Critical", "Windows Server"],
+      "adapter_asset_entities_info": ["Workstation", "Server"],
+      "specific_data-data-hostname": ["dc01.corp.example.com", "dc01"],
+      "specific_data-data-name": ["Domain Controller 01"],
+      "specific_data-data-os-type_distribution_preferred": "Windows Server 2019 Datacenter",
+      "specific_data-data-os-type_distribution": ["Windows", "Windows Server", "Windows Server 2019"],
+      "specific_data-data-network_interfaces-ips_preferred": ["10.10.1.5", "192.168.1.5"],
+      "specific_data-data-network_interfaces-mac_preferred": ["00:50:56:a1:23:45"],
+      "specific_data-data-first_seen_preferred": "Mon, 15 Jan 2024 08:30:00 GMT",
+      "specific_data-data-last_seen": "Wed, 15 Jan 2026 23:45:12 GMT",
+      "specific_data-data-first_fetch_time": "Mon, 15 Jan 2024 08:35:22 GMT",
+      "specific_data-data-last_used_users": ["admin", "sysadmin", "backup_service"],
+      "specific_data-data-last_used_users_mail_association": ["admin@corp.example.com", "sysadmin@corp.example.com"],
+      "specific_data-data-last_used_users_user_title_association": ["System Administrator", "IT Manager", "Service Account"],
+      "specific_data-data-last_used_users_departments_association": ["IT Operations", "Infrastructure"],
+      "specific_data-data-open_ports": [
+        {
+          "port_id": 53,
+          "protocol": "TCP",
+          "service_name": "dns"
+        },
+        {
+          "port_id": 88,
+          "protocol": "TCP",
+          "service_name": "kerberos"
+        },
+        {
+          "port_id": 135,
+          "protocol": "TCP",
+          "service_name": "msrpc"
+        },
+        {
+          "port_id": 389,
+          "protocol": "TCP",
+          "service_name": "ldap"
+        },
+        {
+          "port_id": 445,
+          "protocol": "TCP",
+          "service_name": "microsoft-ds"
+        },
+        {
+          "port_id": 3389,
+          "protocol": "TCP",
+          "service_name": "ms-wbt-server"
+        }
+      ],
+      "specific_data-data-installed_software": [
+        {
+          "vendor": "Microsoft",
+          "name_version": "Windows Server 2019 Standard",
+          "end_of_support_status": "2029-01-09"
+        },
+        {
+          "vendor": "Microsoft",
+          "name_version": ".NET Framework 4.8",
+          "end_of_support_status": "Active"
+        },
+        {
+          "vendor": "CrowdStrike",
+          "name_version": "Falcon Sensor 7.10",
+          "end_of_support_status": "Active"
+        }
+      ],
+      "specific_data-data-security_patches": [
+        {
+          "installed_on": "Tue, 14 Jan 2026 10:22:15 GMT",
+          "patch_description": "Security Update for Windows Server 2019",
+          "security_patch_id": "KB5034127"
+        },
+        {
+          "installed_on": "Thu, 12 Dec 2025 14:30:00 GMT",
+          "patch_description": "Cumulative Update for Windows Server 2019",
+          "security_patch_id": "KB5033371"
+        },
+        {
+          "installed_on": "Wed, 13 Nov 2025 09:15:33 GMT",
+          "patch_description": "Security Update",
+          "security_patch_id": "KB5032198"
+        }
+      ],
+      "specific_data-data-software_cves": [
+        {
+          "cve_id": "CVE-2024-21351",
+          "severity": "Critical",
+          "cvss_score": 9.8
+        }
+      ],
+      "specific_data-data-agent_versions": [
+        {
+          "adapter": "crowdstrike",
+          "version": "7.10.16303.0"
+        },
+        {
+          "adapter": "tanium",
+          "version": "7.4.8.1040"
+        }
+      ]
+    },
+    {
+      "internal_axon_id": "e99a18c428cb38d5f260853678922e03",
+      "adapters": ["active_directory", "okta", "microsoft_365"],
+      "adapter_list_length": 3,
+      "labels": ["Employee", "Finance Department"],
+      "specific_data-data-display_name": ["Sarah Johnson"],
+      "specific_data-data-name": ["sarah.johnson"],
+      "specific_data-data-employee_id": "EMP-2847",
+      "specific_data-data-is_local": false,
+      "specific_data-data-is_locked": false,
+      "specific_data-data-user_department": ["Finance", "Accounting"],
+      "specific_data-data-user_title": ["Senior Financial Analyst"],
+      "specific_data-data-last_seen": "Wed, 15 Jan 2026 18:22:45 GMT",
+      "specific_data-data-first_seen_preferred": "Mon, 03 Jun 2019 09:00:00 GMT",
+      "specific_data-data-first_fetch_time": "Mon, 03 Jun 2019 09:05:12 GMT",
+      "last_logon": "Wed, 15 Jan 2026 07:30:15 GMT",
+      "logon_count": 3847,
+      "user_status": "Active",
+      "groups": ["Finance_Users", "Office365_E3", "VPN_Access"],
+      "specific_data-data-associated_devices": [
+        {
+          "device_id": "a3b2c1d4e5f6789012345678",
+          "device_caption": "LAPTOP-FIN-042",
+          "device_serial": "SN789456123",
+          "device_labels": ["Finance Laptop", "Windows 11"]
+        },
+        {
+          "device_id": "f6e5d4c3b2a1098765432109",
+          "device_caption": "IPHONE-SJ",
+          "device_serial": "IMEI123456789012345",
+          "device_labels": ["Mobile Device", "iOS"]
+        }
+      ]
+    },
+    {
+      "internal_axon_id": "7c6a180b36896a0a8c02787eeaaef062",
+      "adapters": ["vmware", "crowdstrike"],
+      "adapter_list_length": 2,
+      "labels": ["Development", "Test Environment"],
+      "adapter_asset_entities_info": ["Virtual Machine"],
+      "specific_data-data-hostname": ["devweb01.dev.example.com", "devweb01"],
+      "specific_data-data-name": ["Development Web Server"],
+      "specific_data-data-os-type_distribution_preferred": "Ubuntu 22.04.3 LTS",
+      "specific_data-data-os-type_distribution": ["Linux", "Ubuntu", "Ubuntu 22.04 LTS"],
+      "specific_data-data-network_interfaces-ips_preferred": ["10.20.5.120"],
+      "specific_data-data-network_interfaces-mac_preferred": ["00:0c:29:8f:3a:71"],
+      "specific_data-data-first_seen_preferred": "Thu, 10 Aug 2023 11:20:00 GMT",
+      "specific_data-data-last_seen": "Wed, 15 Jan 2026 22:10:30 GMT",
+      "specific_data-data-first_fetch_time": "Thu, 10 Aug 2023 11:25:45 GMT",
+      "specific_data-data-last_used_users": ["devops", "webadmin"],
+      "specific_data-data-last_used_users_mail_association": ["devops@example.com", "webadmin@example.com"],
+      "specific_data-data-last_used_users_user_title_association": ["DevOps Engineer", "Web Administrator"],
+      "specific_data-data-last_used_users_departments_association": ["Engineering", "Development"],
+      "specific_data-data-open_ports": [
+        {
+          "port_id": 22,
+          "protocol": "TCP",
+          "service_name": "ssh"
+        },
+        {
+          "port_id": 80,
+          "protocol": "TCP",
+          "service_name": "nginx"
+        },
+        {
+          "port_id": 443,
+          "protocol": "TCP",
+          "service_name": "nginx"
+        },
+        {
+          "port_id": 8080,
+          "protocol": "TCP",
+          "service_name": "node"
+        }
+      ],
+      "specific_data-data-installed_software": [
+        {
+          "vendor": "Canonical",
+          "name_version": "Ubuntu 22.04.3 LTS",
+          "end_of_support_status": "2027-04-01"
+        },
+        {
+          "vendor": "NGINX",
+          "name_version": "nginx/1.18.0",
+          "end_of_support_status": "Active"
+        },
+        {
+          "vendor": "Node.js",
+          "name_version": "Node.js 18.19.0",
+          "end_of_support_status": "2025-04-30"
+        }
+      ],
+      "specific_data-data-security_patches": [
+        {
+          "installed_on": "Mon, 13 Jan 2026 03:45:22 GMT",
+          "patch_description": "Ubuntu Security Update",
+          "security_patch_id": "USN-6582-1"
+        },
+        {
+          "installed_on": "Fri, 15 Dec 2025 02:30:18 GMT",
+          "patch_description": "Kernel Security Update",
+          "security_patch_id": "USN-6548-1"
+        }
+      ],
+      "specific_data-data-agent_versions": [
+        {
+          "adapter": "crowdstrike",
+          "version": "7.09.16102.0"
+        }
+      ]
+    }
+  ]
+}
